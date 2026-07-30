@@ -28,11 +28,11 @@ export class SurveyCreate {
   readonly title = signal('');
   readonly deadline = signal('');
   readonly description = signal('');
-  readonly showDescription = signal(true);
   readonly questions = signal<QuestionForm[]>([this.emptyQuestion()]);
   readonly isSubmitting = signal(false);
   readonly errorMessage = signal<string | null>(null);
   readonly showPublishedToast = signal(false);
+  readonly isCategoryMenuOpen = signal(false);
 
   readonly isValid = computed(
     () =>
@@ -57,8 +57,17 @@ export class SurveyCreate {
     this.title.set(value);
   }
 
-  onCategoryChange(value: string): void {
+  toggleCategoryMenu(): void {
+    this.isCategoryMenuOpen.update((open) => !open);
+  }
+
+  closeCategoryMenu(): void {
+    this.isCategoryMenuOpen.set(false);
+  }
+
+  selectCategory(value: string): void {
     this.category.set(value);
+    this.isCategoryMenuOpen.set(false);
   }
 
   onDeadlineChange(value: string): void {
@@ -73,8 +82,7 @@ export class SurveyCreate {
     this.deadline.set('');
   }
 
-  removeDescription(): void {
-    this.showDescription.set(false);
+  resetDescription(): void {
     this.description.set('');
   }
 

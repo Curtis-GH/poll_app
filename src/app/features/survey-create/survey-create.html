@@ -8,8 +8,14 @@
 
   <div class="create-survey__panel">
     <div class="field field--name">
-      <div class="field__label-row">
-        <label for="survey-name">Survey name</label>
+      <label for="survey-name">Survey name</label>
+      <div class="field__input-row">
+        <input
+          id="survey-name"
+          type="text"
+          [value]="title()"
+          (input)="onTitleChange($any($event.target).value)"
+        />
         <button
           type="button"
           class="icon-button"
@@ -19,18 +25,12 @@
           <img src="images/desktop/icon-delete.svg" alt="" />
         </button>
       </div>
-      <input
-        id="survey-name"
-        type="text"
-        [value]="title()"
-        (input)="onTitleChange($any($event.target).value)"
-      />
     </div>
 
     <div class="field field--meta">
-      <div class="field">
+      <div class="field field--deadline">
         <label for="survey-deadline">Set end date (optional)</label>
-        <div class="date-input">
+        <div class="field__input-row">
           <input
             id="survey-deadline"
             type="date"
@@ -39,7 +39,7 @@
           />
           <button
             type="button"
-            class="icon-button date-input__clear"
+            class="icon-button"
             (click)="resetDeadline()"
             aria-label="Reset end date"
           >
@@ -48,42 +48,64 @@
         </div>
       </div>
 
-      <div class="field">
-        <label for="survey-category">Choose category</label>
-        <select
-          id="survey-category"
-          [value]="category()"
-          (change)="onCategoryChange($any($event.target).value)"
-        >
-          <option value="" disabled>Choose category</option>
-          @for (option of categories; track option) {
-            <option [value]="option">{{ option }}</option>
+      <div class="field field--category">
+        <label>Choose category</label>
+        <div class="category-select">
+          <button
+            type="button"
+            class="category-select__trigger"
+            [class.category-select__trigger--open]="isCategoryMenuOpen()"
+            (click)="toggleCategoryMenu()"
+          >
+            {{ category() || 'Choose category' }}
+            <span class="category-select__chevron"></span>
+          </button>
+
+          @if (isCategoryMenuOpen()) {
+            <button
+              type="button"
+              class="category-select__backdrop"
+              aria-label="Close category menu"
+              (click)="closeCategoryMenu()"
+            ></button>
+            <ul class="category-select__menu">
+              @for (option of categories; track option) {
+                <li>
+                  <button
+                    type="button"
+                    class="category-select__option"
+                    [class.category-select__option--active]="category() === option"
+                    (click)="selectCategory(option)"
+                  >
+                    {{ option }}
+                  </button>
+                </li>
+              }
+            </ul>
           }
-        </select>
+        </div>
       </div>
     </div>
 
-    @if (showDescription()) {
-      <div class="field field--description">
-        <div class="field__label-row">
-          <label for="survey-description">Describing text (optional)</label>
-          <button
-            type="button"
-            class="icon-button"
-            (click)="removeDescription()"
-            aria-label="Remove description"
-          >
-            <img src="images/desktop/icon-delete.svg" alt="" />
-          </button>
-        </div>
+    <div class="field field--description">
+      <label for="survey-description">Describing text (optional)</label>
+      <div class="field__input-row field__input-row--top">
         <textarea
           id="survey-description"
           rows="3"
           [value]="description()"
           (input)="onDescriptionChange($any($event.target).value)"
         ></textarea>
+        <button
+          type="button"
+          class="icon-button"
+          (click)="resetDescription()"
+          aria-label="Clear description"
+        >
+          <img src="images/desktop/icon-delete.svg" alt="" />
+        </button>
       </div>
-    }
+    </div>
 
     <div class="questions-column">
       @for (question of questions(); track $index; let qIndex = $index) {
@@ -174,14 +196,16 @@
     <p class="create-survey__error">{{ errorMessage() }}</p>
   }
 
-  <button
-    type="button"
-    class="button button--primary create-survey__publish"
-    [disabled]="!isValid() || isSubmitting()"
-    (click)="publish()"
-  >
-    Publish ✓
-  </button>
+  <div class="create-survey__publish-row">
+    <button
+      type="button"
+      class="button button--primary"
+      [disabled]="!isValid() || isSubmitting()"
+      (click)="publish()"
+    >
+      Publish ✓
+    </button>
+  </div>
 
   @if (showPublishedToast()) {
     <div class="publish-toast">
