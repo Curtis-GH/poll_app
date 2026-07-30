@@ -148,9 +148,12 @@
           </div>
 
           @if (question.options.length < maxOptions) {
-            <button type="button" class="link-button" (click)="addOption(qIndex)">
-              Add answer +
-            </button>
+            <div class="add-answer-row">
+              <button type="button" class="link-button" (click)="addOption(qIndex)">
+                Add answer +
+              </button>
+              <span class="add-answer-row__hint">You can add up to {{ maxOptions }} answer fields.</span>
+            </div>
           }
         </div>
       }

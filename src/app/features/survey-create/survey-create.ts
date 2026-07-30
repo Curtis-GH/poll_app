@@ -9,7 +9,7 @@ interface QuestionForm {
   options: string[];
 }
 
-const MAX_OPTIONS = 5;
+const MAX_OPTIONS = 6;
 
 @Component({
   selector: 'app-survey-create',
