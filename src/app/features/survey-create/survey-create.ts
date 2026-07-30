@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { SurveyService } from '../../core/services/survey';
 import { CreateSurveyInput, SURVEY_CATEGORIES } from '../../models/survey.model';
@@ -9,7 +9,16 @@ interface QuestionForm {
   options: string[];
 }
 
+interface DraftData {
+  category: string;
+  title: string;
+  deadline: string;
+  description: string;
+  questions: QuestionForm[];
+}
+
 const MAX_OPTIONS = 6;
+const DRAFT_STORAGE_KEY = 'poll-app:survey-draft';
 
 @Component({
   selector: 'app-survey-create',
@@ -20,15 +29,16 @@ const MAX_OPTIONS = 6;
 export class SurveyCreate {
   private readonly surveyService = inject(SurveyService);
   private readonly router = inject(Router);
+  private readonly draft = this.loadDraft();
 
   readonly categories = SURVEY_CATEGORIES;
   readonly maxOptions = MAX_OPTIONS;
 
-  readonly category = signal('');
-  readonly title = signal('');
-  readonly deadline = signal('');
-  readonly description = signal('');
-  readonly questions = signal<QuestionForm[]>([this.emptyQuestion()]);
+  readonly category = signal(this.draft.category ?? '');
+  readonly title = signal(this.draft.title ?? '');
+  readonly deadline = signal(this.draft.deadline ?? '');
+  readonly description = signal(this.draft.description ?? '');
+  readonly questions = signal<QuestionForm[]>(this.draft.questions ?? [this.emptyQuestion()]);
   readonly isSubmitting = signal(false);
   readonly errorMessage = signal<string | null>(null);
   readonly showPublishedToast = signal(false);
@@ -40,6 +50,10 @@ export class SurveyCreate {
       this.category().length > 0 &&
       this.questions().every((q) => this.isQuestionValid(q)),
   );
+
+  constructor() {
+    effect(() => this.saveDraft());
+  }
 
   optionLetter(index: number): string {
     return String.fromCharCode(65 + index);
@@ -136,9 +150,14 @@ export class SurveyCreate {
     this.router.navigate(['/']);
   }
 
+  clearDraft(): void {
+    localStorage.removeItem(DRAFT_STORAGE_KEY);
+  }
+
   private async trySubmit(): Promise<void> {
     try {
       await this.surveyService.createSurvey(this.buildInput());
+      this.clearDraft();
       this.showPublishedToast.set(true);
       setTimeout(() => this.dismissPublishedToast(), 2500);
     } catch {
@@ -177,5 +196,25 @@ export class SurveyCreate {
 
   private emptyQuestion(): QuestionForm {
     return { questionText: '', allowMultipleAnswers: false, options: ['', ''] };
+  }
+
+  private saveDraft(): void {
+    const draft: DraftData = {
+      category: this.category(),
+      title: this.title(),
+      deadline: this.deadline(),
+      description: this.description(),
+      questions: this.questions(),
+    };
+    localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(draft));
+  }
+
+  private loadDraft(): Partial<DraftData> {
+    try {
+      const raw = localStorage.getItem(DRAFT_STORAGE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch {
+      return {};
+    }
   }
 }
