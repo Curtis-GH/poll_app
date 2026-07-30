@@ -5,15 +5,31 @@
   gap: var(--space-md);
   padding: var(--space-lg) var(--space-md);
 
+  &__text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   &__heading {
+    font-family: 'Nerko One', cursive;
+    font-weight: 400;
     font-size: 2.2rem;
-    color: var(--color-accent);
     line-height: 1.15;
+    letter-spacing: 0;
+    color: var(--color-accent);
+    margin-bottom: var(--space-sm);
   }
 
   &__subtext {
+    font-family: 'Mulish', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 100%;
+    letter-spacing: 0;
     color: var(--color-text-on-dark);
     max-width: 40ch;
+    margin-bottom: var(--space-xs);
   }
 
   &__illustration {
@@ -133,6 +149,15 @@
 
     &__text {
       max-width: 50%;
+    }
+
+    &__heading {
+      font-size: 100px;
+      line-height: 89px;
+    }
+
+    &__subtext {
+      font-size: 24px;
     }
 
     &__illustration {
