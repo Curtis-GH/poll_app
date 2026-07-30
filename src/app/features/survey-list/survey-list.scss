@@ -33,9 +33,76 @@
   }
 
   &__illustration {
+    position: relative;
     width: 100%;
     max-width: 320px;
+    aspect-ratio: 1 / 1;
     align-self: center;
+  }
+}
+
+.hero__illustration-phone {
+  position: absolute;
+  inset: 8% 0;
+  width: 100%;
+  height: 84%;
+  object-fit: contain;
+}
+
+.hero__illustration-icon {
+  position: absolute;
+  width: 18%;
+
+  &--question {
+    top: 0;
+    right: 4%;
+    width: 20%;
+  }
+
+  &--chat {
+    top: 22%;
+    left: -6%;
+    width: 34%;
+  }
+
+  &--star {
+    bottom: 8%;
+    left: -4%;
+    width: 22%;
+  }
+
+  &--check {
+    bottom: 2%;
+    left: 20%;
+    width: 18%;
+  }
+}
+
+.hero__illustration:hover {
+  .hero__illustration-icon--question {
+    animation: icon-float 1.6s ease-in-out infinite;
+  }
+
+  .hero__illustration-icon--chat {
+    animation: icon-float 1.8s ease-in-out infinite 0.1s;
+  }
+
+  .hero__illustration-icon--star {
+    animation: icon-float 1.7s ease-in-out infinite 0.2s;
+  }
+
+  .hero__illustration-icon--check {
+    animation: icon-float 1.5s ease-in-out infinite 0.3s;
+  }
+}
+
+@keyframes icon-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(-4deg);
   }
 }
 
