@@ -5,6 +5,37 @@
   padding: var(--space-md);
 }
 
+.publish-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 24px;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  max-width: 420px;
+  background: var(--color-surface-light);
+  color: var(--color-text-on-light);
+  border-radius: var(--radius-lg) 40px var(--radius-lg) var(--radius-lg);
+  padding: var(--space-md) var(--space-lg);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+
+  p {
+    font-family: 'Nerko One', cursive;
+    font-weight: 400;
+    font-size: 1.5rem;
+    line-height: 1.2;
+  }
+
+  &__close {
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    color: var(--color-text-on-light);
+    flex-shrink: 0;
+  }
+}
+
 .create-survey {
   &__header {
     display: flex;
@@ -226,7 +257,7 @@ textarea {
     grid-template-areas:
       'name description'
       'meta description'
-      'questions addQuestion';
+      'questions questions';
   }
 
   .field--name {
@@ -243,22 +274,14 @@ textarea {
 
   .questions-column {
     grid-area: questions;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: var(--space-lg);
+    row-gap: var(--space-md);
+    align-items: start;
   }
 
   .add-question-slot {
-    grid-area: addQuestion;
     align-self: start;
-  }
-
-  .options-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: var(--space-md);
-    row-gap: var(--space-xs);
-  }
-
-  .option-row:nth-child(5) {
-    max-width: 50%;
-    justify-self: center;
   }
 }

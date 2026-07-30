@@ -1,5 +1,5 @@
-<div [class.theme-light]="!isHomePage()">
-  <app-site-header [variant]="isHomePage() ? 'dark' : 'light'"></app-site-header>
+<div [class.theme-light]="!isDarkTheme()">
+  <app-site-header [variant]="isDarkTheme() ? 'dark' : 'light'"></app-site-header>
   <main>
     <router-outlet></router-outlet>
   </main>

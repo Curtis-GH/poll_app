@@ -32,6 +32,7 @@ export class SurveyCreate {
   readonly questions = signal<QuestionForm[]>([this.emptyQuestion()]);
   readonly isSubmitting = signal(false);
   readonly errorMessage = signal<string | null>(null);
+  readonly showPublishedToast = signal(false);
 
   readonly isValid = computed(
     () =>
@@ -44,14 +45,12 @@ export class SurveyCreate {
     return String.fromCharCode(65 + index);
   }
 
-  optionGridColumn(index: number): string {
-    if (index === 4) return '1 / -1';
-    return index < 2 ? '1' : '2';
+  questionGridColumn(index: number): string {
+    return index % 2 === 0 ? '1' : '2';
   }
 
-  optionGridRow(index: number): string {
-    if (index === 4) return '3';
-    return index % 2 === 0 ? '1' : '2';
+  questionGridRow(index: number): string {
+    return String(Math.floor(index / 2) + 1);
   }
 
   onTitleChange(value: string): void {
@@ -124,10 +123,16 @@ export class SurveyCreate {
     await this.trySubmit();
   }
 
+  dismissPublishedToast(): void {
+    this.showPublishedToast.set(false);
+    this.router.navigate(['/']);
+  }
+
   private async trySubmit(): Promise<void> {
     try {
       await this.surveyService.createSurvey(this.buildInput());
-      this.router.navigate(['/']);
+      this.showPublishedToast.set(true);
+      setTimeout(() => this.dismissPublishedToast(), 2500);
     } catch {
       this.errorMessage.set('Umfrage konnte nicht erstellt werden. Versuch es erneut.');
     } finally {

@@ -87,7 +87,11 @@
 
     <div class="questions-column">
       @for (question of questions(); track $index; let qIndex = $index) {
-        <div class="question-block">
+        <div
+          class="question-block"
+          [style.grid-column]="questionGridColumn(qIndex)"
+          [style.grid-row]="questionGridRow(qIndex)"
+        >
           <div class="field__label-row">
             <label>{{ qIndex + 1 }}. Question</label>
             @if (questions().length > 1) {
@@ -122,11 +126,7 @@
 
           <div class="options-grid">
             @for (option of question.options; track $index; let oIndex = $index) {
-              <div
-                class="option-row"
-                [style.grid-column]="optionGridColumn(oIndex)"
-                [style.grid-row]="optionGridRow(oIndex)"
-              >
+              <div class="option-row">
                 <span class="option-row__letter">{{ optionLetter(oIndex) }}.</span>
                 <input
                   type="text"
@@ -154,12 +154,16 @@
           }
         </div>
       }
-    </div>
 
-    <div class="add-question-slot">
-      <button type="button" class="button button--muted" (click)="addQuestion()">
-        Add next question +
-      </button>
+      <div
+        class="add-question-slot"
+        [style.grid-column]="questionGridColumn(questions().length)"
+        [style.grid-row]="questionGridRow(questions().length)"
+      >
+        <button type="button" class="button button--muted" (click)="addQuestion()">
+          Add next question +
+        </button>
+      </div>
     </div>
   </div>
 
@@ -175,4 +179,18 @@
   >
     Publish ✓
   </button>
+
+  @if (showPublishedToast()) {
+    <div class="publish-toast">
+      <p>Your survey is now published</p>
+      <button
+        type="button"
+        class="publish-toast__close"
+        (click)="dismissPublishedToast()"
+        aria-label="Close"
+      >
+        ✕
+      </button>
+    </div>
+  }
 </div>
