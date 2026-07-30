@@ -145,11 +145,16 @@
   margin-bottom: var(--space-sm);
 }
 
+.questions-grid {
+  display: block;
+}
+
 .question {
   margin-top: var(--space-md);
 
   &__title {
-    font-size: 1rem;
+    font-size: 1.2rem;
+    font-weight: 700;
     margin-bottom: 4px;
   }
 
@@ -216,6 +221,12 @@
 
   .survey-detail__panel {
     flex: 1 1 60%;
+  }
+
+  .questions-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: var(--space-lg);
   }
 
   .survey-detail__results {

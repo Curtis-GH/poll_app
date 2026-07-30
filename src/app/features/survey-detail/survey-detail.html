@@ -21,27 +21,29 @@
         <p class="survey-detail__description">{{ survey.description }}</p>
       }
 
-      @for (question of survey.questions; track question.id; let qIndex = $index) {
-        <div class="question">
-          <h3 class="question__title">{{ qIndex + 1 }}. {{ question.questionText }}</h3>
-          @if (question.allowMultipleAnswers) {
-            <p class="question__hint">More than one answers are possible.</p>
-          }
+      <div class="questions-grid">
+        @for (question of survey.questions; track question.id; let qIndex = $index) {
+          <div class="question">
+            <h3 class="question__title">{{ qIndex + 1 }}. {{ question.questionText }}</h3>
+            @if (question.allowMultipleAnswers) {
+              <p class="question__hint">More than one answers are possible.</p>
+            }
 
-          @for (option of question.options; track option.id) {
-            <label class="option">
-              <input
-                [type]="question.allowMultipleAnswers ? 'checkbox' : 'radio'"
-                [name]="'q-' + question.id"
-                [checked]="isSelected(question.id, option.id)"
-                [disabled]="hasVoted() || survey.status === 'closed'"
-                (change)="toggleOption(question.id, option.id, question.allowMultipleAnswers)"
-              />
-              {{ optionLetterFor(question, option) }}. {{ option.label }}
-            </label>
-          }
-        </div>
-      }
+            @for (option of question.options; track option.id) {
+              <label class="option">
+                <input
+                  [type]="question.allowMultipleAnswers ? 'checkbox' : 'radio'"
+                  [name]="'q-' + question.id"
+                  [checked]="isSelected(question.id, option.id)"
+                  [disabled]="hasVoted() || survey.status === 'closed'"
+                  (change)="toggleOption(question.id, option.id, question.allowMultipleAnswers)"
+                />
+                {{ optionLetterFor(question, option) }}. {{ option.label }}
+              </label>
+            }
+          </div>
+        }
+      </div>
 
       @if (survey.status === 'ongoing' && !hasVoted()) {
         <button
