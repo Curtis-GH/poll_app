@@ -3,6 +3,10 @@
   margin: 0 auto;
   padding: var(--space-md) var(--space-md) 0;
 
+  @media (min-width: 960px) {
+    padding: var(--space-lg) 96px 0;
+  }
+
   &__brand {
     display: inline-flex;
     align-items: center;

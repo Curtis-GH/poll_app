@@ -18,7 +18,7 @@
     line-height: 1.15;
     letter-spacing: 0;
     color: var(--color-accent);
-    margin-bottom: var(--space-sm);
+    margin-bottom: var(--space-md);
   }
 
   &__subtext {
@@ -29,7 +29,7 @@
     letter-spacing: 0;
     color: var(--color-text-on-dark);
     max-width: 40ch;
-    margin-bottom: var(--space-xs);
+    margin-bottom: var(--space-sm);
   }
 
   &__illustration {
@@ -145,7 +145,7 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: var(--space-xl) var(--space-xl) var(--space-lg);
+    padding: 96px 96px var(--space-lg);
 
     &__text {
       max-width: 50%;
@@ -154,10 +154,12 @@
     &__heading {
       font-size: 100px;
       line-height: 89px;
+      margin-bottom: 48px;
     }
 
     &__subtext {
       font-size: 24px;
+      margin-bottom: 32px;
     }
 
     &__illustration {
@@ -166,7 +168,7 @@
   }
 
   .surveys {
-    padding: 0 var(--space-xl) var(--space-xl);
+    padding: 0 96px var(--space-xl);
   }
 
   .ending-soon__list {
