@@ -1,14 +1,24 @@
 <div class="create-survey">
   <div class="create-survey__header">
     <span class="badge">Draft</span>
-    <a class="close-button" routerLink="/" aria-label="Close">✕</a>
+    <a class="button button--muted" routerLink="/">Cancel ✕</a>
   </div>
 
   <h1 class="create-survey__heading">Create new survey</h1>
 
   <div class="create-survey__panel">
-    <div class="field">
-      <label for="survey-name">Survey name</label>
+    <div class="field field--name">
+      <div class="field__label-row">
+        <label for="survey-name">Survey name</label>
+        <button
+          type="button"
+          class="icon-button"
+          (click)="onTitleChange('')"
+          aria-label="Clear survey name"
+        >
+          <img src="images/desktop/icon-delete.svg" alt="" />
+        </button>
+      </div>
       <input
         id="survey-name"
         type="text"
@@ -17,44 +27,46 @@
       />
     </div>
 
-    <div class="field">
-      <label for="survey-category">Choose category</label>
-      <select
-        id="survey-category"
-        [value]="category()"
-        (change)="onCategoryChange($any($event.target).value)"
-      >
-        <option value="" disabled>Choose category</option>
-        @for (option of categories; track option) {
-          <option [value]="option">{{ option }}</option>
-        }
-      </select>
+    <div class="field field--meta">
+      @if (showDeadline()) {
+        <div class="field">
+          <div class="field__label-row">
+            <label for="survey-deadline">Set end date (optional)</label>
+            <button
+              type="button"
+              class="icon-button"
+              (click)="removeDeadline()"
+              aria-label="Remove end date"
+            >
+              <img src="images/desktop/icon-delete.svg" alt="" />
+            </button>
+          </div>
+          <input
+            id="survey-deadline"
+            type="date"
+            [value]="deadline()"
+            (input)="onDeadlineChange($any($event.target).value)"
+          />
+        </div>
+      }
+
+      <div class="field">
+        <label for="survey-category">Choose category</label>
+        <select
+          id="survey-category"
+          [value]="category()"
+          (change)="onCategoryChange($any($event.target).value)"
+        >
+          <option value="" disabled>Choose category</option>
+          @for (option of categories; track option) {
+            <option [value]="option">{{ option }}</option>
+          }
+        </select>
+      </div>
     </div>
 
-    @if (showDeadline()) {
-      <div class="field">
-        <div class="field__label-row">
-          <label for="survey-deadline">Set end date (optional)</label>
-          <button
-            type="button"
-            class="icon-button"
-            (click)="removeDeadline()"
-            aria-label="Remove end date"
-          >
-            🗑
-          </button>
-        </div>
-        <input
-          id="survey-deadline"
-          type="date"
-          [value]="deadline()"
-          (input)="onDeadlineChange($any($event.target).value)"
-        />
-      </div>
-    }
-
     @if (showDescription()) {
-      <div class="field">
+      <div class="field field--description">
         <div class="field__label-row">
           <label for="survey-description">Describing text (optional)</label>
           <button
@@ -63,7 +75,7 @@
             (click)="removeDescription()"
             aria-label="Remove description"
           >
-            🗑
+            <img src="images/desktop/icon-delete.svg" alt="" />
           </button>
         </div>
         <textarea
@@ -75,72 +87,82 @@
       </div>
     }
 
-    @for (question of questions(); track $index; let qIndex = $index) {
-      <div class="question-block">
-        <div class="field__label-row">
-          <label>{{ qIndex + 1 }}. Question</label>
-          @if (questions().length > 1) {
-            <button
-              type="button"
-              class="icon-button"
-              (click)="removeQuestion(qIndex)"
-              aria-label="Remove question"
-            >
-              🗑
-            </button>
-          }
-        </div>
-        <input
-          type="text"
-          placeholder="Which date would work best for you?"
-          [value]="question.questionText"
-          (input)="onQuestionTextChange(qIndex, $any($event.target).value)"
-        />
-
-        <div class="answers-row">
-          <label>Answers</label>
-          <label class="checkbox">
-            <input
-              type="checkbox"
-              [checked]="question.allowMultipleAnswers"
-              (change)="toggleAllowMultiple(qIndex)"
-            />
-            Allow multiple answers.
-          </label>
-        </div>
-
-        @for (option of question.options; track $index; let oIndex = $index) {
-          <div class="option-row">
-            <span class="option-row__letter">{{ optionLetter(oIndex) }}.</span>
-            <input
-              type="text"
-              [value]="option"
-              (input)="onOptionChange(qIndex, oIndex, $any($event.target).value)"
-            />
-            @if (question.options.length > 2) {
+    <div class="questions-column">
+      @for (question of questions(); track $index; let qIndex = $index) {
+        <div class="question-block">
+          <div class="field__label-row">
+            <label>{{ qIndex + 1 }}. Question</label>
+            @if (questions().length > 1) {
               <button
                 type="button"
                 class="icon-button"
-                (click)="removeOption(qIndex, oIndex)"
-                aria-label="Remove answer"
+                (click)="removeQuestion(qIndex)"
+                aria-label="Remove question"
               >
-                🗑
+                <img src="images/desktop/icon-delete.svg" alt="" />
               </button>
             }
           </div>
-        }
+          <input
+            type="text"
+            placeholder="Which date would work best for you?"
+            [value]="question.questionText"
+            (input)="onQuestionTextChange(qIndex, $any($event.target).value)"
+          />
 
-        @if (question.options.length < maxOptions) {
-          <button type="button" class="link-button" (click)="addOption(qIndex)">
-            Add answer +
-          </button>
-        }
-      </div>
-    }
+          <div class="answers-row">
+            <label>Answers</label>
+            <label class="checkbox">
+              <input
+                type="checkbox"
+                [checked]="question.allowMultipleAnswers"
+                (change)="toggleAllowMultiple(qIndex)"
+              />
+              Allow multiple answers.
+            </label>
+          </div>
 
-    <button type="button" class="button button--muted" (click)="addQuestion()">
-      Add next question +
-    </button>
+          <div class="options-grid">
+            @for (option of question.options; track $index; let oIndex = $index) {
+              <div
+                class="option-row"
+                [style.grid-column]="optionGridColumn(oIndex)"
+                [style.grid-row]="optionGridRow(oIndex)"
+              >
+                <span class="option-row__letter">{{ optionLetter(oIndex) }}.</span>
+                <input
+                  type="text"
+                  [value]="option"
+                  (input)="onOptionChange(qIndex, oIndex, $any($event.target).value)"
+                />
+                @if (question.options.length > 2) {
+                  <button
+                    type="button"
+                    class="icon-button"
+                    (click)="removeOption(qIndex, oIndex)"
+                    aria-label="Remove answer"
+                  >
+                    <img src="images/desktop/icon-delete.svg" alt="" />
+                  </button>
+                }
+              </div>
+            }
+          </div>
+
+          @if (question.options.length < maxOptions) {
+            <button type="button" class="link-button" (click)="addOption(qIndex)">
+              Add answer +
+            </button>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="add-question-slot">
+      <button type="button" class="button button--muted" (click)="addQuestion()">
+        Add next question +
+      </button>
+    </div>
   </div>
 
   @if (errorMessage()) {

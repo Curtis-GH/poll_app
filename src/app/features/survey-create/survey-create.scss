@@ -49,22 +49,11 @@
   border-radius: var(--radius-pill);
 }
 
-.close-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: var(--color-surface);
-  color: var(--color-text-on-dark);
-  text-decoration: none;
-}
-
 .field {
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
+  flex: 1;
 
   label {
     font-weight: 700;
@@ -74,6 +63,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+  }
+
+  &--meta {
+    flex-direction: column;
+    gap: var(--space-md);
   }
 }
 
@@ -95,11 +89,17 @@ textarea {
 }
 
 .icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: transparent;
   border: none;
-  color: var(--color-text-on-dark);
-  font-size: 1rem;
   padding: 4px;
+
+  img {
+    width: 18px;
+    height: 18px;
+  }
 }
 
 .question-block {
@@ -124,10 +124,23 @@ textarea {
 .checkbox {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-weight: 400 !important;
   font-size: 0.85rem;
   color: var(--color-text-muted);
+
+  input[type='checkbox'] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--color-accent);
+    cursor: pointer;
+  }
+}
+
+.options-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
 }
 
 .option-row {
@@ -164,6 +177,7 @@ textarea {
   border-radius: var(--radius-pill);
   padding: 12px 24px;
   font-weight: 700;
+  text-decoration: none;
 
   &--primary {
     background: var(--color-accent-soft);
@@ -176,7 +190,60 @@ textarea {
   }
 
   &--muted {
-    background: rgba(255, 255, 255, 0.1);
+    background: #7c6659;
     color: var(--color-text-on-dark);
+  }
+}
+
+@media (min-width: 960px) {
+  :host {
+    max-width: 900px;
+  }
+
+  .create-survey__panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: var(--space-lg);
+    row-gap: var(--space-md);
+    grid-template-areas:
+      'name description'
+      'meta description'
+      'questions addQuestion';
+  }
+
+  .field--name {
+    grid-area: name;
+  }
+
+  .field--meta {
+    grid-area: meta;
+    flex-direction: row;
+    gap: var(--space-md);
+    align-items: flex-start;
+  }
+
+  .field--description {
+    grid-area: description;
+  }
+
+  .questions-column {
+    grid-area: questions;
+  }
+
+  .add-question-slot {
+    grid-area: addQuestion;
+    align-self: start;
+  }
+
+  .options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: var(--space-md);
+    row-gap: var(--space-xs);
+  }
+
+  .option-row:nth-child(5) {
+    max-width: 50%;
+    justify-self: center;
   }
 }

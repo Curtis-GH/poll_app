@@ -45,6 +45,16 @@ export class SurveyCreate {
     return String.fromCharCode(65 + index);
   }
 
+  optionGridColumn(index: number): string {
+    if (index === 4) return '1 / -1';
+    return index < 2 ? '1' : '2';
+  }
+
+  optionGridRow(index: number): string {
+    if (index === 4) return '3';
+    return index % 2 === 0 ? '1' : '2';
+  }
+
   onTitleChange(value: string): void {
     this.title.set(value);
   }
