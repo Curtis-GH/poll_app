@@ -1,4 +1,6 @@
-<app-site-header></app-site-header>
-<main>
-  <router-outlet></router-outlet>
-</main>
+<div [class.theme-light]="!isHomePage()">
+  <app-site-header [variant]="isHomePage() ? 'dark' : 'light'"></app-site-header>
+  <main>
+    <router-outlet></router-outlet>
+  </main>
+</div>

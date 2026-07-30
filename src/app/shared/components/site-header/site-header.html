@@ -2,7 +2,11 @@
   <a class="site-header__brand" routerLink="/">
     <img
       class="site-header__logo"
-      src="images/desktop/poll-app-logo.svg"
+      [src]="
+        variant() === 'light'
+          ? 'images/desktop/poll-app-logo-dark.svg'
+          : 'images/desktop/poll-app-logo.svg'
+      "
       alt="Poll App Logo"
     />
   </a>

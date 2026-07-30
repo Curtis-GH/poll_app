@@ -130,9 +130,11 @@
           </div>
         }
 
-        <button type="button" class="link-button" (click)="addOption(qIndex)">
-          Add answer +
-        </button>
+        @if (question.options.length < maxOptions) {
+          <button type="button" class="link-button" (click)="addOption(qIndex)">
+            Add answer +
+          </button>
+        }
       </div>
     }
 

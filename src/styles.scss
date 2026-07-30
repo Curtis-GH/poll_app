@@ -35,6 +35,12 @@ body {
   color: var(--color-text-on-dark);
 }
 
+.theme-light {
+  background: #ffffff;
+  color: var(--color-text-on-light);
+  min-height: 100vh;
+}
+
 h1,
 h2,
 h3 {

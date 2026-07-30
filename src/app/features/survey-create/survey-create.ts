@@ -9,6 +9,8 @@ interface QuestionForm {
   options: string[];
 }
 
+const MAX_OPTIONS = 5;
+
 @Component({
   selector: 'app-survey-create',
   imports: [RouterLink],
@@ -20,6 +22,7 @@ export class SurveyCreate {
   private readonly router = inject(Router);
 
   readonly categories = SURVEY_CATEGORIES;
+  readonly maxOptions = MAX_OPTIONS;
 
   readonly category = signal('');
   readonly title = signal('');
@@ -86,8 +89,9 @@ export class SurveyCreate {
   }
 
   addOption(index: number): void {
-    const options = [...this.questions()[index].options, ''];
-    this.patchQuestion(index, { options });
+    const current = this.questions()[index].options;
+    if (current.length >= MAX_OPTIONS) return;
+    this.patchQuestion(index, { options: [...current, ''] });
   }
 
   removeOption(index: number, optionIndex: number): void {

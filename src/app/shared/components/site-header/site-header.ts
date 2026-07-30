@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
+
+export type SiteHeaderVariant = 'dark' | 'light';
 
 @Component({
   selector: 'app-site-header',
@@ -7,4 +9,6 @@ import { RouterLink } from '@angular/router';
   templateUrl: './site-header.html',
   styleUrl: './site-header.scss',
 })
-export class SiteHeader {}
+export class SiteHeader {
+  readonly variant = input<SiteHeaderVariant>('dark');
+}

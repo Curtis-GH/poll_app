@@ -2,7 +2,10 @@
   <p class="status-text">Loading survey…</p>
 } @else if (survey(); as survey) {
   <div class="survey-detail__top-bar">
-    <a class="button button--primary" routerLink="/surveys/new">Create survey</a>
+    <a class="button button--primary" routerLink="/surveys/new">
+      Create survey
+      <img class="button__icon" src="images/desktop/icon-plus-circle.svg" alt="" />
+    </a>
   </div>
 
   <div class="survey-detail__grid">
