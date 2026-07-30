@@ -1,1 +1,52 @@
-/* You can add global styles to this file, and also import other style files */
+/* Globale Styles fuer die Poll-App */
+
+:root {
+  --color-bg: #2b2033;
+  --color-surface: #3a2d47;
+  --color-surface-light: #f6eef8;
+  --color-accent: #f7a35c;
+  --color-accent-soft: #ffd9a8;
+  --color-text-on-dark: #ffffff;
+  --color-text-muted: #c9bed1;
+  --color-text-on-light: #2b2033;
+
+  --font-heading: 'Fredoka', sans-serif;
+  --font-body: 'Nunito Sans', sans-serif;
+
+  --radius-lg: 24px;
+  --radius-md: 16px;
+  --radius-pill: 999px;
+
+  --space-xs: 8px;
+  --space-sm: 16px;
+  --space-md: 24px;
+  --space-lg: 40px;
+  --space-xl: 64px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  background-color: var(--color-bg);
+  color: var(--color-text-on-dark);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-heading);
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+}

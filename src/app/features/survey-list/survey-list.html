@@ -1,1 +1,78 @@
-<p>survey-list works!</p>
+<section class="hero">
+  <div class="hero__text">
+    <h1 class="hero__heading">Collect Feedback, Unlock Ideas</h1>
+    <p class="hero__subtext">
+      Create and share surveys in minutes – from team events to workplace
+      culture. Collect opinions, engage your audience, and turn feedback into
+      action.
+    </p>
+    <a class="button button--primary" routerLink="/surveys/new">New survey</a>
+  </div>
+  <img
+    class="hero__illustration"
+    src="images/desktop/hero-illustration.svg"
+    alt="Illustration of a phone displaying a survey"
+  />
+</section>
+
+<section class="surveys">
+  <h2 class="surveys__heading">Your surveys</h2>
+
+  @if (isLoading()) {
+    <p class="surveys__status">Loading surveys…</p>
+  } @else {
+    @if (endingSoonSurveys().length > 0) {
+      <div class="ending-soon">
+        <h3 class="ending-soon__heading">Ending soon surveys</h3>
+        <div class="ending-soon__list">
+          @for (survey of endingSoonSurveys(); track survey.id) {
+            <app-survey-card [survey]="survey" variant="highlight" />
+          }
+        </div>
+      </div>
+    }
+
+    <div class="survey-controls">
+      <div class="survey-tabs" role="tablist">
+        <button
+          type="button"
+          role="tab"
+          class="survey-tabs__tab"
+          [class.survey-tabs__tab--active]="activeTab() === 'ongoing'"
+          [attr.aria-selected]="activeTab() === 'ongoing'"
+          (click)="setTab('ongoing')"
+        >
+          Active survey
+        </button>
+        <button
+          type="button"
+          role="tab"
+          class="survey-tabs__tab"
+          [class.survey-tabs__tab--active]="activeTab() === 'closed'"
+          [attr.aria-selected]="activeTab() === 'closed'"
+          (click)="setTab('closed')"
+        >
+          Past survey
+        </button>
+      </div>
+
+      <label class="survey-sort">
+        Sort by
+        <select class="survey-sort__select" (change)="onSortChange($event)">
+          <option value="default">Categories (default)</option>
+          <option value="category">Categories (A–Z)</option>
+        </select>
+      </label>
+    </div>
+
+    @if (visibleSurveys().length > 0) {
+      <div class="survey-grid">
+        @for (survey of visibleSurveys(); track survey.id) {
+          <app-survey-card [survey]="survey" />
+        }
+      </div>
+    } @else {
+      <p class="surveys__status">No surveys here yet.</p>
+    }
+  }
+</section>

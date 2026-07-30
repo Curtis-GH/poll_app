@@ -1,0 +1,23 @@
+.site-header {
+  padding: var(--space-md) var(--space-md) 0;
+
+  &__brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    text-decoration: none;
+  }
+
+  &__logo {
+    height: 32px;
+    width: auto;
+  }
+
+  &__name {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--color-text-on-dark);
+    line-height: 1.1;
+  }
+}
