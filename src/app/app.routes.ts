@@ -11,4 +11,11 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/survey-create/survey-create').then((m) => m.SurveyCreate),
   },
+  {
+    path: 'surveys/:id',
+    loadComponent: () =>
+      import('./features/survey-detail/survey-detail').then(
+        (m) => m.SurveyDetailComponent,
+      ),
+  },
 ];
