@@ -1,5 +1,14 @@
 export type SurveyStatus = 'ongoing' | 'closed';
 
+export const SURVEY_CATEGORIES = [
+  'Team Activities',
+  'Health & Wellness',
+  'Gaming & Entertainment',
+  'Education & Learning',
+  'Lifestyle & Preferences',
+  'Technology & Innovation',
+] as const;
+
 /** Zusammenfassung einer Umfrage, wie sie im Homescreen (Karten/Liste) angezeigt wird. */
 export interface Survey {
   id: string;

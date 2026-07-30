@@ -77,20 +77,49 @@
         </button>
       </div>
 
-      <label class="survey-sort">
-        Sort by
-        <select class="survey-sort__select" (change)="onSortChange($event)">
-          <option value="default">Categories (default)</option>
-          <option value="category">Categories (A–Z)</option>
-        </select>
-      </label>
+      <div class="survey-sort">
+        <button
+          type="button"
+          class="survey-sort__trigger"
+          [class.survey-sort__trigger--open]="isSortMenuOpen()"
+          (click)="toggleSortMenu()"
+        >
+          Sort by categories
+          <span class="survey-sort__chevron"></span>
+        </button>
+
+        @if (isSortMenuOpen()) {
+          <button
+            type="button"
+            class="survey-sort__backdrop"
+            aria-label="Close category menu"
+            (click)="closeSortMenu()"
+          ></button>
+          <ul class="survey-sort__menu">
+            @for (category of categories; track category) {
+              <li>
+                <button
+                  type="button"
+                  class="survey-sort__option"
+                  [class.survey-sort__option--active]="selectedCategory() === category"
+                  (click)="selectCategory(category)"
+                >
+                  {{ category }}
+                </button>
+              </li>
+            }
+          </ul>
+        }
+      </div>
     </div>
 
     @if (visibleSurveys().length > 0) {
-      <div class="survey-grid">
-        @for (survey of visibleSurveys(); track survey.id) {
-          <app-survey-card [survey]="survey" />
-        }
+      <div class="survey-grid-scroll">
+        <div class="survey-grid">
+          @for (survey of visibleSurveys(); track survey.id) {
+            <app-survey-card [survey]="survey" />
+          }
+        </div>
       </div>
     } @else {
       <p class="surveys__status">No surveys here yet.</p>

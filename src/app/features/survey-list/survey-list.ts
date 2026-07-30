@@ -1,7 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { SurveyService } from '../../core/services/survey';
-import { Survey, SurveyStatus } from '../../models/survey.model';
+import { SURVEY_CATEGORIES, Survey, SurveyStatus } from '../../models/survey.model';
 import { SurveyCard } from '../../shared/components/survey-card/survey-card';
 
 @Component({
@@ -13,10 +13,13 @@ import { SurveyCard } from '../../shared/components/survey-card/survey-card';
 export class SurveyList {
   private readonly surveyService = inject(SurveyService);
 
+  readonly categories = SURVEY_CATEGORIES;
+
   readonly surveys = signal<Survey[]>([]);
   readonly isLoading = signal(true);
   readonly activeTab = signal<SurveyStatus>('ongoing');
-  readonly sortByCategory = signal(false);
+  readonly selectedCategory = signal<string | null>(null);
+  readonly isSortMenuOpen = signal(false);
 
   readonly endingSoonSurveys = computed(() =>
     this.surveys()
@@ -28,7 +31,8 @@ export class SurveyList {
     const filtered = this.surveys().filter(
       (survey) => survey.status === this.activeTab(),
     );
-    return this.sortByCategory() ? this.sortedByCategory(filtered) : filtered;
+    const category = this.selectedCategory();
+    return category ? this.sortedByCategory(filtered, category) : filtered;
   });
 
   constructor() {
@@ -39,9 +43,17 @@ export class SurveyList {
     this.activeTab.set(tab);
   }
 
-  onSortChange(event: Event): void {
-    const value = (event.target as HTMLSelectElement).value;
-    this.sortByCategory.set(value === 'category');
+  toggleSortMenu(): void {
+    this.isSortMenuOpen.update((open) => !open);
+  }
+
+  closeSortMenu(): void {
+    this.isSortMenuOpen.set(false);
+  }
+
+  selectCategory(category: string): void {
+    this.selectedCategory.set(this.selectedCategory() === category ? null : category);
+    this.isSortMenuOpen.set(false);
   }
 
   private async loadSurveys(): Promise<void> {
@@ -52,7 +64,7 @@ export class SurveyList {
     }
   }
 
-  private sortedByCategory(surveys: Survey[]): Survey[] {
-    return [...surveys].sort((a, b) => a.category.localeCompare(b.category));
+  private sortedByCategory(surveys: Survey[], category: string): Survey[] {
+    return [...surveys].sort((a) => (a.category === category ? -1 : 1));
   }
 }

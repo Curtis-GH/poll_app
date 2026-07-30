@@ -1,7 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { SurveyService } from '../../core/services/survey';
-import { CreateSurveyInput } from '../../models/survey.model';
+import { CreateSurveyInput, SURVEY_CATEGORIES } from '../../models/survey.model';
 
 interface QuestionForm {
   questionText: string;
@@ -19,12 +19,7 @@ export class SurveyCreate {
   private readonly surveyService = inject(SurveyService);
   private readonly router = inject(Router);
 
-  readonly categories = [
-    'Team activities',
-    'Health & Wellness',
-    'Gaming & Entertainment',
-    'Healthy Lifestyle',
-  ];
+  readonly categories = SURVEY_CATEGORIES;
 
   readonly category = signal('');
   readonly title = signal('');
