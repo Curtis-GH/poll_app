@@ -28,27 +28,25 @@
     </div>
 
     <div class="field field--meta">
-      @if (showDeadline()) {
-        <div class="field">
-          <div class="field__label-row">
-            <label for="survey-deadline">Set end date (optional)</label>
-            <button
-              type="button"
-              class="icon-button"
-              (click)="removeDeadline()"
-              aria-label="Remove end date"
-            >
-              <img src="images/desktop/icon-delete.svg" alt="" />
-            </button>
-          </div>
+      <div class="field">
+        <label for="survey-deadline">Set end date (optional)</label>
+        <div class="date-input">
           <input
             id="survey-deadline"
             type="date"
             [value]="deadline()"
             (input)="onDeadlineChange($any($event.target).value)"
           />
+          <button
+            type="button"
+            class="icon-button date-input__clear"
+            (click)="resetDeadline()"
+            aria-label="Reset end date"
+          >
+            <img src="images/desktop/icon-delete.svg" alt="" />
+          </button>
         </div>
-      }
+      </div>
 
       <div class="field">
         <label for="survey-category">Choose category</label>

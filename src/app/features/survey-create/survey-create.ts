@@ -28,7 +28,6 @@ export class SurveyCreate {
   readonly title = signal('');
   readonly deadline = signal('');
   readonly description = signal('');
-  readonly showDeadline = signal(true);
   readonly showDescription = signal(true);
   readonly questions = signal<QuestionForm[]>([this.emptyQuestion()]);
   readonly isSubmitting = signal(false);
@@ -71,8 +70,7 @@ export class SurveyCreate {
     this.description.set(value);
   }
 
-  removeDeadline(): void {
-    this.showDeadline.set(false);
+  resetDeadline(): void {
     this.deadline.set('');
   }
 

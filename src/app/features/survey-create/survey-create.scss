@@ -66,8 +66,26 @@
   }
 
   &--meta {
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
     gap: var(--space-md);
+  }
+}
+
+.date-input {
+  position: relative;
+
+  input[type='date'] {
+    width: 100%;
+    padding-right: 56px;
+  }
+
+  &__clear {
+    position: absolute;
+    top: 50%;
+    right: 28px;
+    transform: translateY(-50%);
   }
 }
 
@@ -217,9 +235,6 @@ textarea {
 
   .field--meta {
     grid-area: meta;
-    flex-direction: row;
-    gap: var(--space-md);
-    align-items: flex-start;
   }
 
   .field--description {
