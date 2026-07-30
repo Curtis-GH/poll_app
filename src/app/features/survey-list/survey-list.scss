@@ -262,9 +262,25 @@
     padding: 0 96px var(--space-xl);
   }
 
-  .ending-soon__list {
-    > * {
-      flex: 1 1 0;
+  .surveys__heading {
+    font-size: 52px;
+    margin-bottom: 80px;
+  }
+
+  .ending-soon {
+    margin-bottom: 64px;
+
+    &__heading {
+      font-size: 24px;
+      margin-bottom: 32px;
+    }
+
+    &__list {
+      gap: 32px;
+
+      > * {
+        flex: 1 1 0;
+      }
     }
   }
 

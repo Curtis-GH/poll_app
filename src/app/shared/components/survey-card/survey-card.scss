@@ -49,3 +49,22 @@
     border-radius: var(--radius-pill);
   }
 }
+
+@media (min-width: 960px) {
+  .survey-card--highlight {
+    border-radius: var(--radius-md) 64px var(--radius-md) var(--radius-md);
+
+    .survey-card__link {
+      min-height: 340px;
+      padding: 40px;
+    }
+
+    .survey-card__category {
+      font-size: 0.95rem;
+    }
+
+    .survey-card__title {
+      font-size: 1.6rem;
+    }
+  }
+}
