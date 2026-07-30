@@ -17,6 +17,10 @@
   &__logo {
     height: 32px;
     width: auto;
+
+    @media (min-width: 960px) {
+      height: 72px;
+    }
   }
 
   &__name {
