@@ -117,6 +117,8 @@
 
   &__icon {
     width: 0;
+    height: 24px;
+    flex-shrink: 0;
     margin-left: 0;
     opacity: 0;
     overflow: hidden;
