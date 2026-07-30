@@ -3,45 +3,57 @@ import { Supabase } from './supabase';
 import {
   CreateSurveyInput,
   Survey,
+  SurveyDetail,
   SurveyOption,
   SurveyOptionRow,
+  SurveyQuestion,
+  SurveyQuestionRow,
   SurveyRow,
   SurveyStatus,
 } from '../../models/survey.model';
 
-type SurveyRowWithOptions = SurveyRow & { survey_options: SurveyOptionRow[] };
+type SurveyQuestionRowWithOptions = SurveyQuestionRow & {
+  survey_options: SurveyOptionRow[];
+};
+type SurveyRowWithQuestions = SurveyRow & {
+  survey_questions: SurveyQuestionRowWithOptions[];
+};
+
+const DETAIL_SELECT =
+  '*, survey_questions(id, survey_id, question_text, allow_multiple_answers, position, survey_options(id, question_id, label, votes(id)))';
 
 @Service()
 export class SurveyService {
   private readonly supabase = inject(Supabase).client;
 
-  /** Laedt alle Umfragen inkl. Optionen und Stimmenzahl, sortiert nach Deadline. */
+  /** Laedt alle Umfragen (ohne Fragen/Optionen) sortiert nach Deadline. */
   async getSurveys(): Promise<Survey[]> {
     const { data, error } = await this.supabase
       .from('surveys')
-      .select('*, survey_options(id, survey_id, label, votes(id))')
+      .select('*')
       .order('deadline', { ascending: true });
 
     if (error) throw error;
     return (data ?? []).map((row) => this.toSurvey(row));
   }
 
-  /** Laedt eine einzelne Umfrage inkl. Optionen und Stimmenzahl. */
-  async getSurveyById(id: string): Promise<Survey> {
+  /** Laedt eine Umfrage inkl. aller Fragen, Optionen und Stimmenzahl. */
+  async getSurveyById(id: string): Promise<SurveyDetail> {
     const { data, error } = await this.supabase
       .from('surveys')
-      .select('*, survey_options(id, survey_id, label, votes(id))')
+      .select(DETAIL_SELECT)
+      .order('position', { foreignTable: 'survey_questions', ascending: true })
       .eq('id', id)
       .single();
 
     if (error) throw error;
-    return this.toSurvey(data);
+    return this.toSurveyDetail(data);
   }
 
-  /** Legt eine neue Umfrage samt Antwortoptionen an und gibt deren ID zurueck. */
+  /** Legt eine neue Umfrage samt Fragen und Antwortoptionen an und gibt deren ID zurueck. */
   async createSurvey(input: CreateSurveyInput): Promise<string> {
     const surveyId = await this.insertSurvey(input);
-    await this.insertOptions(surveyId, input.optionLabels);
+    await this.insertQuestions(surveyId, input.questions);
     return surveyId;
   }
 
@@ -79,13 +91,43 @@ export class SurveyService {
     };
   }
 
-  private async insertOptions(surveyId: string, labels: string[]): Promise<void> {
-    const rows = labels.map((label) => ({ survey_id: surveyId, label }));
+  private async insertQuestions(
+    surveyId: string,
+    questions: CreateSurveyInput['questions'],
+  ): Promise<void> {
+    for (const [index, question] of questions.entries()) {
+      const questionId = await this.insertQuestion(surveyId, question, index);
+      await this.insertOptions(questionId, question.optionLabels);
+    }
+  }
+
+  private async insertQuestion(
+    surveyId: string,
+    question: CreateSurveyInput['questions'][number],
+    position: number,
+  ): Promise<string> {
+    const { data, error } = await this.supabase
+      .from('survey_questions')
+      .insert({
+        survey_id: surveyId,
+        question_text: question.questionText,
+        allow_multiple_answers: question.allowMultipleAnswers,
+        position,
+      })
+      .select('id')
+      .single();
+
+    if (error) throw error;
+    return data.id;
+  }
+
+  private async insertOptions(questionId: string, labels: string[]): Promise<void> {
+    const rows = labels.map((label) => ({ question_id: questionId, label }));
     const { error } = await this.supabase.from('survey_options').insert(rows);
     if (error) throw error;
   }
 
-  private toSurvey(row: SurveyRowWithOptions): Survey {
+  private toSurvey(row: SurveyRow): Survey {
     const deadline = new Date(row.deadline);
     return {
       id: row.id,
@@ -94,6 +136,21 @@ export class SurveyService {
       description: row.description ?? undefined,
       deadline,
       status: this.statusFor(deadline),
+    };
+  }
+
+  private toSurveyDetail(row: SurveyRowWithQuestions): SurveyDetail {
+    return {
+      ...this.toSurvey(row),
+      questions: row.survey_questions.map((question) => this.toQuestion(question)),
+    };
+  }
+
+  private toQuestion(row: SurveyQuestionRowWithOptions): SurveyQuestion {
+    return {
+      id: row.id,
+      questionText: row.question_text,
+      allowMultipleAnswers: row.allow_multiple_answers,
       options: row.survey_options.map((option) => this.toOption(option)),
     };
   }

@@ -6,4 +6,9 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/survey-list/survey-list').then((m) => m.SurveyList),
   },
+  {
+    path: 'surveys/new',
+    loadComponent: () =>
+      import('./features/survey-create/survey-create').then((m) => m.SurveyCreate),
+  },
 ];
