@@ -1,4 +1,6 @@
 .site-header {
+  max-width: 1440px;
+  margin: 0 auto;
   padding: var(--space-md) var(--space-md) 0;
 
   &__brand {
