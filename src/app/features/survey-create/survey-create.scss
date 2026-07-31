@@ -44,10 +44,18 @@
     margin-bottom: var(--space-sm);
   }
 
+  &__heading-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+  }
+
   &__heading {
     color: var(--color-accent);
     font-size: 1.75rem;
-    margin-bottom: var(--space-md);
+    margin-bottom: 0;
   }
 
   &__panel {
