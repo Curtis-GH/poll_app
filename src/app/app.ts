@@ -2,8 +2,10 @@ import { Component, inject, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { SiteHeader } from './shared/components/site-header/site-header';
 
+/** Routes that use the dark theme (orange logo); all other routes use the light theme. */
 const DARK_ROUTES = ['/', '/surveys/new'];
 
+/** Root component: hosts the router outlet and switches the site header theme by route. */
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, SiteHeader],
@@ -13,10 +15,11 @@ const DARK_ROUTES = ['/', '/surveys/new'];
 export class App {
   private readonly router = inject(Router);
 
-  /** True auf Home und Create Survey (dunkles Theme); false auf allen anderen Seiten. */
+  /** True on Home and Create Survey (dark theme); false on all other pages. */
   readonly isDarkTheme = signal(DARK_ROUTES.includes(this.router.url));
 
   constructor() {
+    /** Keeps isDarkTheme in sync with the current route on every navigation. */
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.isDarkTheme.set(DARK_ROUTES.includes(event.urlAfterRedirects));

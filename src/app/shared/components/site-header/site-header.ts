@@ -1,8 +1,10 @@
 import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+/** Which logo/color variant the header renders. */
 export type SiteHeaderVariant = 'dark' | 'light';
 
+/** App-wide header with the logo, shown in either the dark or light theme variant. */
 @Component({
   selector: 'app-site-header',
   imports: [RouterLink],
@@ -10,6 +12,6 @@ export type SiteHeaderVariant = 'dark' | 'light';
   styleUrl: './site-header.scss',
 })
 export class SiteHeader {
-  /** 'dark' zeigt das orange Logo (Homescreen), 'light' das dunkle Logo (helle Seiten). */
+  /** 'dark' shows the orange logo (homescreen), 'light' shows the dark logo (light pages). */
   readonly variant = input<SiteHeaderVariant>('dark');
 }

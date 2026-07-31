@@ -3,8 +3,10 @@ import { RouterLink } from '@angular/router';
 import { Survey } from '../../../models/survey.model';
 import { formatDeadlineLabel } from '../../utils/deadline.util';
 
+/** Which visual style the survey card renders. */
 export type SurveyCardVariant = 'highlight' | 'default';
 
+/** Card summarizing a single survey, used in both the "Ending soon" and the full list. */
 @Component({
   selector: 'app-survey-card',
   imports: [RouterLink],
@@ -12,10 +14,11 @@ export type SurveyCardVariant = 'highlight' | 'default';
   styleUrl: './survey-card.scss',
 })
 export class SurveyCard {
+  /** The survey to display. */
   readonly survey = input.required<Survey>();
-  /** 'highlight' fuer die helle "Ending soon"-Karte, 'default' fuer die normale Grid-Karte. */
+  /** 'highlight' for the "Ending soon" card, 'default' for the regular grid card. */
   readonly variant = input<SurveyCardVariant>('default');
 
-  /** Anzeige-Label fuer die Deadline, z.B. "Ends in 3 Days". */
+  /** Display label for the deadline, e.g. "Ends in 3 Days". */
   readonly deadlineLabel = computed(() => formatDeadlineLabel(this.survey().deadline));
 }

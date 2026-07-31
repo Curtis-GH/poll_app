@@ -1,32 +1,36 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { SurveyService } from '../../core/services/survey';
-import { SurveyDetail, SurveyOption, SurveyQuestion } from '../../models/survey.model';
+import { SurveyDetails, SurveyOption, SurveyQuestion } from '../../models/survey.model';
 import { formatDeadlineDate } from '../../shared/utils/deadline.util';
 
 type SelectedOptions = Record<string, string[]>;
 
 const VOTED_SURVEYS_STORAGE_KEY = 'poll-app:voted-surveys';
 
+/** Char code of 'A', used as the base for lettering answer options (A, B, C, ...). */
+const OPTION_LETTER_BASE_CHAR_CODE = 65;
+
+/** Detail/voting view of a single survey: lets the user vote and shows live results. */
 @Component({
   selector: 'app-survey-detail',
   imports: [RouterLink],
   templateUrl: './survey-detail.html',
   styleUrl: './survey-detail.scss',
 })
-export class SurveyDetailComponent {
+export class SurveyDetail {
   private readonly route = inject(ActivatedRoute);
   private readonly surveyService = inject(SurveyService);
   private readonly surveyId = this.route.snapshot.paramMap.get('id')!;
 
-  readonly survey = signal<SurveyDetail | null>(null);
+  readonly survey = signal<SurveyDetails | null>(null);
   readonly isLoading = signal(true);
   readonly hasVoted = signal(this.hasAlreadyVoted(this.surveyId));
   readonly isSubmitting = signal(false);
   readonly resultsExpanded = signal(true);
   readonly selectedOptionIds = signal<SelectedOptions>({});
 
-  /** True, sobald jede Frage mindestens eine ausgewaehlte Antwort hat. */
+  /** True once every question has at least one selected answer. */
   readonly canSubmit = computed(() => {
     const survey = this.survey();
     if (!survey) return false;
@@ -37,15 +41,17 @@ export class SurveyDetailComponent {
     this.loadSurvey();
   }
 
+  /** Formats a deadline for display, e.g. "Ends on 01.09.2025". */
   formatDate(deadline: Date): string {
     return formatDeadlineDate(deadline);
   }
 
+  /** True if the given option is currently selected for the given question. */
   isSelected(questionId: string, optionId: string): boolean {
     return (this.selectedOptionIds()[questionId] ?? []).includes(optionId);
   }
 
-  /** Waehlt eine Antwortoption; bei Mehrfachauswahl togglet, sonst ersetzt sie die Auswahl. */
+  /** Selects an answer option; toggles it if multiple answers are allowed, otherwise replaces the selection. */
   toggleOption(questionId: string, optionId: string, allowMultiple: boolean): void {
     this.selectedOptionIds.update((map) => {
       const current = map[questionId] ?? [];
@@ -54,24 +60,25 @@ export class SurveyDetailComponent {
     });
   }
 
-  /** Ermittelt den Options-Buchstaben (A, B, C, ...) anhand der Position in der Frage. */
+  /** Derives the option letter (A, B, C, ...) from its position within the question. */
   optionLetterFor(question: SurveyQuestion, option: SurveyOption): string {
     const index = question.options.findIndex((o) => o.id === option.id);
-    return String.fromCharCode(65 + index);
+    return String.fromCharCode(OPTION_LETTER_BASE_CHAR_CODE + index);
   }
 
-  /** Stimmenanteil der Option in Prozent, gerundet, 0 wenn noch keine Stimmen vorliegen. */
+  /** Vote share for the option in percent, rounded, 0 if there are no votes yet. */
   percentFor(question: SurveyQuestion, option: SurveyOption): number {
     const total = question.options.reduce((sum, o) => sum + o.voteCount, 0);
     if (total === 0) return 0;
     return Math.round((option.voteCount / total) * 100);
   }
 
+  /** Expands or collapses the live results panel. */
   toggleResults(): void {
     this.resultsExpanded.update((expanded) => !expanded);
   }
 
-  /** Gibt alle ausgewaehlten Stimmen ab und laedt die Umfrage neu, damit die Auswertung live ist. */
+  /** Casts all selected votes and reloads the survey so the results are live. */
   async completeSurvey(): Promise<void> {
     if (!this.canSubmit() || this.isSubmitting()) return;
     this.isSubmitting.set(true);
@@ -85,6 +92,7 @@ export class SurveyDetailComponent {
     }
   }
 
+  /** Casts a vote for every currently selected option. */
   private async castAllVotes(): Promise<void> {
     const allOptionIds = Object.values(this.selectedOptionIds()).flat();
     for (const optionId of allOptionIds) {
@@ -92,6 +100,7 @@ export class SurveyDetailComponent {
     }
   }
 
+  /** Loads the survey (including questions, options and vote counts) from the backend. */
   private async loadSurvey(): Promise<void> {
     this.isLoading.set(true);
     try {
@@ -101,16 +110,17 @@ export class SurveyDetailComponent {
     }
   }
 
+  /** Adds the id to the array if absent, otherwise removes it. */
   private toggleInArray(arr: string[], id: string): string[] {
     return arr.includes(id) ? arr.filter((x) => x !== id) : [...arr, id];
   }
 
-  /** Prueft, ob in diesem Browser bereits fuer die uebergebene Umfrage abgestimmt wurde. */
+  /** Checks whether this browser has already voted on the given survey. */
   private hasAlreadyVoted(surveyId: string): boolean {
     return this.readVotedSurveyIds().includes(surveyId);
   }
 
-  /** Merkt sich dauerhaft (localStorage), dass fuer diese Umfrage bereits abgestimmt wurde. */
+  /** Persistently remembers (via localStorage) that this survey has been voted on. */
   private markAsVoted(surveyId: string): void {
     const votedIds = this.readVotedSurveyIds();
     if (votedIds.includes(surveyId)) return;
@@ -120,7 +130,7 @@ export class SurveyDetailComponent {
     );
   }
 
-  /** Liest die Liste aller in diesem Browser bereits beantworteten Umfrage-IDs. */
+  /** Reads the list of survey ids this browser has already voted on. */
   private readVotedSurveyIds(): string[] {
     try {
       const raw = localStorage.getItem(VOTED_SURVEYS_STORAGE_KEY);

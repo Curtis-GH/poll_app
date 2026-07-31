@@ -1,6 +1,7 @@
+/** Lifecycle state of a survey, derived from whether its deadline has passed. */
 export type SurveyStatus = 'ongoing' | 'closed';
 
-/** Feste Liste der waehlbaren Umfrage-Kategorien (Create-Formular & Sortier-Dropdown). */
+/** Fixed list of selectable survey categories (create form & sort dropdown). */
 export const SURVEY_CATEGORIES = [
   'Team Activities',
   'Health & Wellness',
@@ -10,7 +11,7 @@ export const SURVEY_CATEGORIES = [
   'Technology & Innovation',
 ] as const;
 
-/** Zusammenfassung einer Umfrage, wie sie im Homescreen (Karten/Liste) angezeigt wird. */
+/** Summary of a survey as shown on the homescreen (cards/list). */
 export interface Survey {
   id: string;
   category: string;
@@ -20,14 +21,14 @@ export interface Survey {
   status: SurveyStatus;
 }
 
-/** Eine einzelne Antwortmoeglichkeit inkl. aktueller Stimmenzahl. */
+/** A single answer option including its current vote count. */
 export interface SurveyOption {
   id: string;
   label: string;
   voteCount: number;
 }
 
-/** Eine Frage innerhalb einer Umfrage mit ihren Antwortoptionen. */
+/** A question within a survey along with its answer options. */
 export interface SurveyQuestion {
   id: string;
   questionText: string;
@@ -35,12 +36,12 @@ export interface SurveyQuestion {
   options: SurveyOption[];
 }
 
-/** Vollstaendige Umfrage inkl. aller Fragen und Antwortoptionen (Detail-/Abstimmungsansicht). */
-export interface SurveyDetail extends Survey {
+/** Full survey including all questions and answer options (detail/voting view). */
+export interface SurveyDetails extends Survey {
   questions: SurveyQuestion[];
 }
 
-/** Rohdaten aus der `surveys`-Tabelle, wie sie von Supabase zurueckkommen. */
+/** Raw row from the `surveys` table, as returned by Supabase. */
 export interface SurveyRow {
   id: string;
   category: string;
@@ -50,7 +51,7 @@ export interface SurveyRow {
   created_at: string;
 }
 
-/** Rohdaten aus der `survey_questions`-Tabelle. */
+/** Raw row from the `survey_questions` table. */
 export interface SurveyQuestionRow {
   id: string;
   survey_id: string;
@@ -59,7 +60,7 @@ export interface SurveyQuestionRow {
   position: number;
 }
 
-/** Rohdaten aus der `survey_options`-Tabelle inkl. verknuepfter Stimmen. */
+/** Raw row from the `survey_options` table including linked votes. */
 export interface SurveyOptionRow {
   id: string;
   question_id: string;
@@ -67,14 +68,14 @@ export interface SurveyOptionRow {
   votes: { id: string }[];
 }
 
-/** Formular-Eingabe fuer eine einzelne Frage beim Erstellen einer Umfrage. */
+/** Form input for a single question when creating a survey. */
 export interface CreateQuestionInput {
   questionText: string;
   allowMultipleAnswers: boolean;
   optionLabels: string[];
 }
 
-/** Formular-Eingabe zum Erstellen einer neuen Umfrage. */
+/** Form input for creating a new survey. */
 export interface CreateSurveyInput {
   category: string;
   title: string;

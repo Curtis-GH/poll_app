@@ -3,12 +3,14 @@ import { Router, RouterLink } from '@angular/router';
 import { SurveyService } from '../../core/services/survey';
 import { CreateSurveyInput, SURVEY_CATEGORIES } from '../../models/survey.model';
 
+/** Form state for a single question while it's being edited. */
 interface QuestionForm {
   questionText: string;
   allowMultipleAnswers: boolean;
   options: string[];
 }
 
+/** Shape of the form state persisted as a localStorage draft. */
 interface DraftData {
   category: string;
   title: string;
@@ -20,6 +22,10 @@ interface DraftData {
 const MAX_OPTIONS = 6;
 const DRAFT_STORAGE_KEY = 'poll-app:survey-draft';
 
+/** Char code of 'A', used as the base for lettering answer options (A, B, C, ...). */
+const OPTION_LETTER_BASE_CHAR_CODE = 65;
+
+/** Create-survey form: multiple questions with up to MAX_OPTIONS answers each, with a localStorage draft. */
 @Component({
   selector: 'app-survey-create',
   imports: [RouterLink],
@@ -44,7 +50,7 @@ export class SurveyCreate implements OnDestroy {
   readonly showPublishedToast = signal(false);
   readonly isCategoryMenuOpen = signal(false);
 
-  /** True, wenn Titel, Kategorie und alle Fragen die Pflichtfelder erfuellen. */
+  /** True when title, category and all questions satisfy the required fields. */
   readonly isValid = computed(
     () =>
       this.title().trim().length > 0 &&
@@ -56,21 +62,22 @@ export class SurveyCreate implements OnDestroy {
     effect(() => this.saveDraft());
   }
 
-  /** Leert den Entwurf auch beim SPA-Verlassen der Seite (z.B. ueber Header-Link), nicht nur bei Cancel. */
+  /** Clears the draft on SPA navigation away from the page (e.g. via a header link), not only on Cancel. */
   ngOnDestroy(): void {
     this.clearDraft();
   }
 
+  /** Derives the option letter (A, B, C, ...) from its position within the question. */
   optionLetter(index: number): string {
-    return String.fromCharCode(65 + index);
+    return String.fromCharCode(OPTION_LETTER_BASE_CHAR_CODE + index);
   }
 
-  /** Spalte (1 oder 2) fuer die Fragen-Grid-Anordnung: Q1/Q2 nebeneinander, Q3/Q4 darunter usw. */
+  /** Column (1 or 2) for the question grid layout: Q1/Q2 side by side, Q3/Q4 below, etc. */
   questionGridColumn(index: number): string {
     return index % 2 === 0 ? '1' : '2';
   }
 
-  /** Zeile fuer die Fragen-Grid-Anordnung, passend zu questionGridColumn. */
+  /** Row for the question grid layout, matching questionGridColumn. */
   questionGridRow(index: number): string {
     return String(Math.floor(index / 2) + 1);
   }
@@ -100,12 +107,12 @@ export class SurveyCreate implements OnDestroy {
     this.description.set(value);
   }
 
-  /** Leert nur den Wert; das Feld bleibt sichtbar (kein Ausblenden der ganzen Zeile). */
+  /** Clears only the value; the field itself stays visible (the whole row isn't hidden). */
   resetDeadline(): void {
     this.deadline.set('');
   }
 
-  /** Leert nur den Wert; das Feld bleibt sichtbar (kein Ausblenden der ganzen Zeile). */
+  /** Clears only the value; the field itself stays visible (the whole row isn't hidden). */
   resetDescription(): void {
     this.description.set('');
   }
@@ -127,7 +134,7 @@ export class SurveyCreate implements OnDestroy {
     this.patchQuestion(index, { allowMultipleAnswers: !current.allowMultipleAnswers });
   }
 
-  /** Fuegt eine Antwortoption hinzu, bis maximal MAX_OPTIONS erreicht ist. */
+  /** Adds an answer option, up to a maximum of MAX_OPTIONS. */
   addOption(index: number): void {
     const current = this.questions()[index].options;
     if (current.length >= MAX_OPTIONS) return;
@@ -146,7 +153,7 @@ export class SurveyCreate implements OnDestroy {
     this.patchQuestion(index, { options });
   }
 
-  /** Validiert das Formular und stoesst das Anlegen der Umfrage an. */
+  /** Validates the form and triggers creating the survey. */
   async publish(): Promise<void> {
     if (!this.isValid()) {
       this.errorMessage.set('Bitte fülle alle Pflichtfelder aus.');
@@ -157,13 +164,13 @@ export class SurveyCreate implements OnDestroy {
     await this.trySubmit();
   }
 
-  /** Blendet den Erfolgs-Dialog aus und navigiert zur Startseite. */
+  /** Hides the success toast and navigates back to the homescreen. */
   dismissPublishedToast(): void {
     this.showPublishedToast.set(false);
     this.router.navigate(['/']);
   }
 
-  /** Loescht den lokal gespeicherten Formular-Entwurf (nach Publish oder Cancel). */
+  /** Removes the locally saved form draft (after publish or cancel). */
   clearDraft(): void {
     localStorage.removeItem(DRAFT_STORAGE_KEY);
   }
@@ -212,7 +219,7 @@ export class SurveyCreate implements OnDestroy {
     return { questionText: '', allowMultipleAnswers: false, options: ['', ''] };
   }
 
-  /** Spiegelt den aktuellen Formularzustand in localStorage, ausgeloest bei jeder Aenderung. */
+  /** Mirrors the current form state into localStorage, triggered on every change. */
   private saveDraft(): void {
     const draft: DraftData = {
       category: this.category(),
@@ -224,7 +231,7 @@ export class SurveyCreate implements OnDestroy {
     localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(draft));
   }
 
-  /** Laedt einen zuvor gespeicherten Entwurf; gibt ein leeres Objekt zurueck, falls keiner existiert. */
+  /** Loads a previously saved draft; returns an empty object if none exists. */
   private loadDraft(): Partial<DraftData> {
     try {
       const raw = localStorage.getItem(DRAFT_STORAGE_KEY);

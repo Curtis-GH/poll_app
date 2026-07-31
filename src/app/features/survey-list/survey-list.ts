@@ -4,6 +4,7 @@ import { SurveyService } from '../../core/services/survey';
 import { SURVEY_CATEGORIES, Survey, SurveyStatus } from '../../models/survey.model';
 import { SurveyCard } from '../../shared/components/survey-card/survey-card';
 
+/** Homescreen: ending-soon highlights, a tab-filtered survey list, and category sorting. */
 @Component({
   selector: 'app-survey-list',
   imports: [RouterLink, SurveyCard],
@@ -21,14 +22,14 @@ export class SurveyList {
   readonly selectedCategory = signal<string | null>(null);
   readonly isSortMenuOpen = signal(false);
 
-  /** Die 3 laufenden Umfragen mit der naechsten Deadline (US1). */
+  /** The 3 ongoing surveys with the nearest deadline (US1). */
   readonly endingSoonSurveys = computed(() =>
     this.surveys()
       .filter((survey) => survey.status === 'ongoing')
       .slice(0, 3),
   );
 
-  /** Umfragen gefiltert nach aktivem Tab, optional nach Kategorie sortiert. */
+  /** Surveys filtered by the active tab, optionally sorted by category. */
   readonly visibleSurveys = computed(() => {
     const filtered = this.surveys().filter(
       (survey) => survey.status === this.activeTab(),
@@ -41,7 +42,7 @@ export class SurveyList {
     this.loadSurveys();
   }
 
-  /** Wechselt zwischen "Active survey" und "Past survey". */
+  /** Switches between "Active survey" and "Past survey". */
   setTab(tab: SurveyStatus): void {
     this.activeTab.set(tab);
   }
@@ -54,7 +55,7 @@ export class SurveyList {
     this.isSortMenuOpen.set(false);
   }
 
-  /** Waehlt eine Kategorie zum Sortieren aus; erneuter Klick hebt die Auswahl auf. */
+  /** Selects a category to sort by; clicking the same category again clears the selection. */
   selectCategory(category: string): void {
     this.selectedCategory.set(this.selectedCategory() === category ? null : category);
     this.isSortMenuOpen.set(false);
@@ -68,7 +69,7 @@ export class SurveyList {
     }
   }
 
-  /** Stellt Treffer der gewaehlten Kategorie an den Anfang, Reihenfolge sonst stabil. */
+  /** Moves matches of the selected category to the front; order is otherwise stable. */
   private sortedByCategory(surveys: Survey[], category: string): Survey[] {
     return [...surveys].sort((a) => (a.category === category ? -1 : 1));
   }
