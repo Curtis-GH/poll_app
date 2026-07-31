@@ -161,9 +161,8 @@
                 <button
                   type="button"
                   class="icon-button option-row__icon"
-                  [disabled]="question.options.length <= 2"
-                  (click)="removeOption(qIndex, oIndex)"
-                  aria-label="Remove answer"
+                  (click)="onOptionTrashClick(qIndex, oIndex)"
+                  aria-label="Clear answer"
                 >
                   <img src="images/desktop/icon-delete.svg" alt="" />
                 </button>

@@ -158,6 +158,18 @@ export class SurveyCreate implements OnDestroy {
     this.patchQuestion(index, { options });
   }
 
+  /** Removes the option if more than 2 remain; otherwise just clears its text (at least 2 options are required). */
+  onOptionTrashClick(index: number, optionIndex: number): void {
+    if (this.questions()[index].options.length > 2) {
+      this.removeOption(index, optionIndex);
+    } else {
+      const options = this.questions()[index].options.map((o, i) =>
+        i === optionIndex ? '' : o,
+      );
+      this.patchQuestion(index, { options });
+    }
+  }
+
   onOptionChange(index: number, optionIndex: number, value: string): void {
     const options = this.questions()[index].options.map((o, i) =>
       i === optionIndex ? value : o,
