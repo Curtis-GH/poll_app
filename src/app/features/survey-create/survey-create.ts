@@ -39,6 +39,8 @@ export class SurveyCreate implements OnDestroy {
 
   readonly categories = SURVEY_CATEGORIES;
   readonly maxOptions = MAX_OPTIONS;
+  /** Today's date in YYYY-MM-DD, used as the `min` for the deadline date input so past dates can't be picked. */
+  readonly todayIsoDate = new Date().toISOString().slice(0, 10);
 
   readonly category = signal(this.draft.category ?? '');
   readonly title = signal(this.draft.title ?? '');
@@ -49,6 +51,7 @@ export class SurveyCreate implements OnDestroy {
   readonly errorMessage = signal<string | null>(null);
   readonly showPublishedToast = signal(false);
   readonly isCategoryMenuOpen = signal(false);
+  private createdSurveyId: string | null = null;
 
   /** True when title, category and all questions satisfy the required fields. */
   readonly isValid = computed(
@@ -164,10 +167,10 @@ export class SurveyCreate implements OnDestroy {
     await this.trySubmit();
   }
 
-  /** Hides the success toast and navigates back to the homescreen. */
+  /** Hides the success overlay and navigates to the survey that was just created. */
   dismissPublishedToast(): void {
     this.showPublishedToast.set(false);
-    this.router.navigate(['/']);
+    this.router.navigate(['/surveys', this.createdSurveyId]);
   }
 
   /** Removes the locally saved form draft (after publish or cancel). */
@@ -177,7 +180,7 @@ export class SurveyCreate implements OnDestroy {
 
   private async trySubmit(): Promise<void> {
     try {
-      await this.surveyService.createSurvey(this.buildInput());
+      this.createdSurveyId = await this.surveyService.createSurvey(this.buildInput());
       this.clearDraft();
       this.showPublishedToast.set(true);
       setTimeout(() => this.dismissPublishedToast(), 2500);

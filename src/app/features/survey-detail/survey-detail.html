@@ -1,13 +1,6 @@
 @if (isLoading()) {
   <p class="status-text">Loading survey…</p>
 } @else if (survey(); as survey) {
-  <div class="survey-detail__top-bar">
-    <a class="button button--primary" routerLink="/surveys/new">
-      Create survey
-      <img class="button__icon" src="images/desktop/icon-plus-circle.svg" alt="" />
-    </a>
-  </div>
-
   <div class="survey-detail__grid">
     <div class="survey-detail__panel">
       <div class="survey-detail__panel-header">
@@ -36,12 +29,24 @@
             @for (option of question.options; track option.id) {
               <label class="option">
                 <input
+                  class="option__input"
                   [type]="question.allowMultipleAnswers ? 'checkbox' : 'radio'"
                   [name]="'q-' + question.id"
                   [checked]="isSelected(question.id, option.id)"
                   [disabled]="hasVoted() || survey.status === 'closed'"
                   (change)="toggleOption(question.id, option.id, question.allowMultipleAnswers)"
                 />
+                <span class="option__box">
+                  <svg class="option__check" viewBox="0 0 16 12" fill="none" aria-hidden="true">
+                    <path
+                      d="M1.5 6.5L5.5 10.5L14.5 1.5"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
                 {{ optionLetterFor(question, option) }}. {{ option.label }}
               </label>
             }

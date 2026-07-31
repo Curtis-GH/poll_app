@@ -44,6 +44,7 @@
           class="field__input"
           id="survey-deadline"
           type="date"
+          [min]="todayIsoDate"
           [value]="deadline()"
           (input)="onDeadlineChange($any($event.target).value)"
         />
@@ -210,7 +211,7 @@
       [disabled]="!isValid() || isSubmitting()"
       (click)="publish()"
     >
-      Publish ✓
+      Publish
     </button>
   </div>
 

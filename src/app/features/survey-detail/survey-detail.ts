@@ -68,9 +68,21 @@ export class SurveyDetail {
 
   /** Vote share for the option in percent, rounded, 0 if there are no votes yet. */
   percentFor(question: SurveyQuestion, option: SurveyOption): number {
-    const total = question.options.reduce((sum, o) => sum + o.voteCount, 0);
+    const total = question.options.reduce(
+      (sum, o) => sum + this.effectiveVoteCount(question.id, o),
+      0,
+    );
     if (total === 0) return 0;
-    return Math.round((option.voteCount / total) * 100);
+    return Math.round((this.effectiveVoteCount(question.id, option) / total) * 100);
+  }
+
+  /**
+   * Vote count for live-preview purposes: adds a not-yet-submitted local selection
+   * on top of the real count, so results already move on click, before "Complete survey".
+   */
+  private effectiveVoteCount(questionId: string, option: SurveyOption): number {
+    if (this.hasVoted()) return option.voteCount;
+    return this.isSelected(questionId, option.id) ? option.voteCount + 1 : option.voteCount;
   }
 
   /** Expands or collapses the live results panel. */
