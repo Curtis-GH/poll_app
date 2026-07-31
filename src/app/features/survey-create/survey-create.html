@@ -157,22 +157,21 @@
             @for (option of question.options; track $index; let oIndex = $index) {
               <div class="option-row">
                 <span class="option-row__letter">{{ optionLetter(oIndex) }}.</span>
-                @if (question.options.length > 2) {
-                  <button
-                    type="button"
-                    class="icon-button option-row__icon"
-                    (click)="removeOption(qIndex, oIndex)"
-                    aria-label="Remove answer"
-                  >
-                    <img src="images/desktop/icon-delete.svg" alt="" />
-                  </button>
-                }
                 <input
                   class="option-row__input"
                   type="text"
                   [value]="option"
                   (input)="onOptionChange(qIndex, oIndex, $any($event.target).value)"
                 />
+                <button
+                  type="button"
+                  class="icon-button option-row__icon"
+                  [disabled]="question.options.length <= 2"
+                  (click)="removeOption(qIndex, oIndex)"
+                  aria-label="Remove answer"
+                >
+                  <img src="images/desktop/icon-delete.svg" alt="" />
+                </button>
               </div>
             }
           </div>
@@ -180,7 +179,8 @@
           @if (question.options.length < maxOptions) {
             <div class="add-answer-row">
               <button type="button" class="link-button" (click)="addOption(qIndex)">
-                Add answer +
+                Add answer
+                <span class="link-button__plus">+</span>
               </button>
               <span class="add-answer-row__hint"
                 >You can add up to {{ maxOptions }} answer fields.</span
