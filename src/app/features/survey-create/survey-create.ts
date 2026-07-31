@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnDestroy, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { SurveyService } from '../../core/services/survey';
 import { CreateSurveyInput, SURVEY_CATEGORIES } from '../../models/survey.model';
@@ -26,7 +26,7 @@ const DRAFT_STORAGE_KEY = 'poll-app:survey-draft';
   templateUrl: './survey-create.html',
   styleUrl: './survey-create.scss',
 })
-export class SurveyCreate {
+export class SurveyCreate implements OnDestroy {
   private readonly surveyService = inject(SurveyService);
   private readonly router = inject(Router);
   private readonly draft = this.loadDraft();
@@ -54,6 +54,11 @@ export class SurveyCreate {
 
   constructor() {
     effect(() => this.saveDraft());
+  }
+
+  /** Leert den Entwurf auch beim SPA-Verlassen der Seite (z.B. ueber Header-Link), nicht nur bei Cancel. */
+  ngOnDestroy(): void {
+    this.clearDraft();
   }
 
   optionLetter(index: number): string {

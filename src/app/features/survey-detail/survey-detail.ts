@@ -6,6 +6,8 @@ import { formatDeadlineDate } from '../../shared/utils/deadline.util';
 
 type SelectedOptions = Record<string, string[]>;
 
+const VOTED_SURVEYS_STORAGE_KEY = 'poll-app:voted-surveys';
+
 @Component({
   selector: 'app-survey-detail',
   imports: [RouterLink],
@@ -19,7 +21,7 @@ export class SurveyDetailComponent {
 
   readonly survey = signal<SurveyDetail | null>(null);
   readonly isLoading = signal(true);
-  readonly hasVoted = signal(false);
+  readonly hasVoted = signal(this.hasAlreadyVoted(this.surveyId));
   readonly isSubmitting = signal(false);
   readonly resultsExpanded = signal(true);
   readonly selectedOptionIds = signal<SelectedOptions>({});
@@ -75,6 +77,7 @@ export class SurveyDetailComponent {
     this.isSubmitting.set(true);
     try {
       await this.castAllVotes();
+      this.markAsVoted(this.surveyId);
       this.hasVoted.set(true);
       await this.loadSurvey();
     } finally {
@@ -100,5 +103,30 @@ export class SurveyDetailComponent {
 
   private toggleInArray(arr: string[], id: string): string[] {
     return arr.includes(id) ? arr.filter((x) => x !== id) : [...arr, id];
+  }
+
+  /** Prueft, ob in diesem Browser bereits fuer die uebergebene Umfrage abgestimmt wurde. */
+  private hasAlreadyVoted(surveyId: string): boolean {
+    return this.readVotedSurveyIds().includes(surveyId);
+  }
+
+  /** Merkt sich dauerhaft (localStorage), dass fuer diese Umfrage bereits abgestimmt wurde. */
+  private markAsVoted(surveyId: string): void {
+    const votedIds = this.readVotedSurveyIds();
+    if (votedIds.includes(surveyId)) return;
+    localStorage.setItem(
+      VOTED_SURVEYS_STORAGE_KEY,
+      JSON.stringify([...votedIds, surveyId]),
+    );
+  }
+
+  /** Liest die Liste aller in diesem Browser bereits beantworteten Umfrage-IDs. */
+  private readVotedSurveyIds(): string[] {
+    try {
+      const raw = localStorage.getItem(VOTED_SURVEYS_STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
   }
 }
