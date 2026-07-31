@@ -28,7 +28,7 @@
       <div class="questions-grid">
         @for (question of survey.questions; track question.id; let qIndex = $index) {
           <div class="question">
-            <h3 class="question__title">{{ qIndex + 1 }}. {{ question.questionText }}</h3>
+            <h2 class="question__title">{{ qIndex + 1 }}. {{ question.questionText }}</h2>
             @if (question.allowMultipleAnswers) {
               <p class="question__hint">More than one answers are possible.</p>
             }

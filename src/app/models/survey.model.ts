@@ -1,5 +1,6 @@
 export type SurveyStatus = 'ongoing' | 'closed';
 
+/** Feste Liste der waehlbaren Umfrage-Kategorien (Create-Formular & Sortier-Dropdown). */
 export const SURVEY_CATEGORIES = [
   'Team Activities',
   'Health & Wellness',
@@ -19,12 +20,14 @@ export interface Survey {
   status: SurveyStatus;
 }
 
+/** Eine einzelne Antwortmoeglichkeit inkl. aktueller Stimmenzahl. */
 export interface SurveyOption {
   id: string;
   label: string;
   voteCount: number;
 }
 
+/** Eine Frage innerhalb einer Umfrage mit ihren Antwortoptionen. */
 export interface SurveyQuestion {
   id: string;
   questionText: string;

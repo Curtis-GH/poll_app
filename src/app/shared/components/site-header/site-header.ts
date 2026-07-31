@@ -10,5 +10,6 @@ export type SiteHeaderVariant = 'dark' | 'light';
   styleUrl: './site-header.scss',
 })
 export class SiteHeader {
+  /** 'dark' zeigt das orange Logo (Homescreen), 'light' das dunkle Logo (helle Seiten). */
   readonly variant = input<SiteHeaderVariant>('dark');
 }

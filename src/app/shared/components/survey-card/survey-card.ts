@@ -13,7 +13,9 @@ export type SurveyCardVariant = 'highlight' | 'default';
 })
 export class SurveyCard {
   readonly survey = input.required<Survey>();
+  /** 'highlight' fuer die helle "Ending soon"-Karte, 'default' fuer die normale Grid-Karte. */
   readonly variant = input<SurveyCardVariant>('default');
 
+  /** Anzeige-Label fuer die Deadline, z.B. "Ends in 3 Days". */
   readonly deadlineLabel = computed(() => formatDeadlineLabel(this.survey().deadline));
 }

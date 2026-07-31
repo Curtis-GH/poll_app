@@ -21,12 +21,14 @@ export class SurveyList {
   readonly selectedCategory = signal<string | null>(null);
   readonly isSortMenuOpen = signal(false);
 
+  /** Die 3 laufenden Umfragen mit der naechsten Deadline (US1). */
   readonly endingSoonSurveys = computed(() =>
     this.surveys()
       .filter((survey) => survey.status === 'ongoing')
       .slice(0, 3),
   );
 
+  /** Umfragen gefiltert nach aktivem Tab, optional nach Kategorie sortiert. */
   readonly visibleSurveys = computed(() => {
     const filtered = this.surveys().filter(
       (survey) => survey.status === this.activeTab(),
@@ -39,6 +41,7 @@ export class SurveyList {
     this.loadSurveys();
   }
 
+  /** Wechselt zwischen "Active survey" und "Past survey". */
   setTab(tab: SurveyStatus): void {
     this.activeTab.set(tab);
   }
@@ -51,6 +54,7 @@ export class SurveyList {
     this.isSortMenuOpen.set(false);
   }
 
+  /** Waehlt eine Kategorie zum Sortieren aus; erneuter Klick hebt die Auswahl auf. */
   selectCategory(category: string): void {
     this.selectedCategory.set(this.selectedCategory() === category ? null : category);
     this.isSortMenuOpen.set(false);
@@ -64,6 +68,7 @@ export class SurveyList {
     }
   }
 
+  /** Stellt Treffer der gewaehlten Kategorie an den Anfang, Reihenfolge sonst stabil. */
   private sortedByCategory(surveys: Survey[], category: string): Survey[] {
     return [...surveys].sort((a) => (a.category === category ? -1 : 1));
   }

@@ -2,6 +2,7 @@ import { Service } from '@angular/core';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from '../../../environments/environment';
 
+/** Stellt den konfigurierten Supabase-Client fuer den Rest der App bereit. */
 @Service()
 export class Supabase {
   readonly client: SupabaseClient = createClient(

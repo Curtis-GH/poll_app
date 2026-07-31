@@ -265,7 +265,7 @@ textarea {
   align-items: center;
   margin-top: var(--space-xs);
 
-  label {
+  &__label {
     font-weight: 700;
   }
 }

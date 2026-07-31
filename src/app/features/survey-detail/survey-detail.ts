@@ -24,6 +24,7 @@ export class SurveyDetailComponent {
   readonly resultsExpanded = signal(true);
   readonly selectedOptionIds = signal<SelectedOptions>({});
 
+  /** True, sobald jede Frage mindestens eine ausgewaehlte Antwort hat. */
   readonly canSubmit = computed(() => {
     const survey = this.survey();
     if (!survey) return false;
@@ -42,6 +43,7 @@ export class SurveyDetailComponent {
     return (this.selectedOptionIds()[questionId] ?? []).includes(optionId);
   }
 
+  /** Waehlt eine Antwortoption; bei Mehrfachauswahl togglet, sonst ersetzt sie die Auswahl. */
   toggleOption(questionId: string, optionId: string, allowMultiple: boolean): void {
     this.selectedOptionIds.update((map) => {
       const current = map[questionId] ?? [];
@@ -50,11 +52,13 @@ export class SurveyDetailComponent {
     });
   }
 
+  /** Ermittelt den Options-Buchstaben (A, B, C, ...) anhand der Position in der Frage. */
   optionLetterFor(question: SurveyQuestion, option: SurveyOption): string {
     const index = question.options.findIndex((o) => o.id === option.id);
     return String.fromCharCode(65 + index);
   }
 
+  /** Stimmenanteil der Option in Prozent, gerundet, 0 wenn noch keine Stimmen vorliegen. */
   percentFor(question: SurveyQuestion, option: SurveyOption): number {
     const total = question.options.reduce((sum, o) => sum + o.voteCount, 0);
     if (total === 0) return 0;
@@ -65,6 +69,7 @@ export class SurveyDetailComponent {
     this.resultsExpanded.update((expanded) => !expanded);
   }
 
+  /** Gibt alle ausgewaehlten Stimmen ab und laedt die Umfrage neu, damit die Auswertung live ist. */
   async completeSurvey(): Promise<void> {
     if (!this.canSubmit() || this.isSubmitting()) return;
     this.isSubmitting.set(true);

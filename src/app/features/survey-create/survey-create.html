@@ -50,12 +50,15 @@
       </div>
 
       <div class="field field--category">
-        <label>Choose category</label>
+        <span class="field__label" id="category-label">Choose category</span>
         <div class="category-select">
           <button
             type="button"
             class="category-select__trigger"
             [class.category-select__trigger--open]="isCategoryMenuOpen()"
+            aria-labelledby="category-label"
+            aria-haspopup="listbox"
+            [attr.aria-expanded]="isCategoryMenuOpen()"
             (click)="toggleCategoryMenu()"
           >
             {{ category() || 'Choose category' }}
@@ -115,7 +118,7 @@
           [style.grid-row]="questionGridRow(qIndex)"
         >
           <div class="field__label-row">
-            <label>{{ qIndex + 1 }}. Question</label>
+            <label [for]="'question-' + qIndex">{{ qIndex + 1 }}. Question</label>
             @if (questions().length > 1) {
               <button
                 type="button"
@@ -128,6 +131,7 @@
             }
           </div>
           <input
+            [id]="'question-' + qIndex"
             type="text"
             placeholder="Which date would work best for you?"
             [value]="question.questionText"
@@ -135,7 +139,7 @@
           />
 
           <div class="answers-row">
-            <label>Answers</label>
+            <span class="answers-row__label">Answers</span>
             <label class="checkbox">
               <input
                 type="checkbox"

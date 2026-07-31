@@ -13,6 +13,7 @@ const DARK_ROUTES = ['/', '/surveys/new'];
 export class App {
   private readonly router = inject(Router);
 
+  /** True auf Home und Create Survey (dunkles Theme); false auf allen anderen Seiten. */
   readonly isDarkTheme = signal(DARK_ROUTES.includes(this.router.url));
 
   constructor() {

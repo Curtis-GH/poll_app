@@ -44,6 +44,7 @@ export class SurveyCreate {
   readonly showPublishedToast = signal(false);
   readonly isCategoryMenuOpen = signal(false);
 
+  /** True, wenn Titel, Kategorie und alle Fragen die Pflichtfelder erfuellen. */
   readonly isValid = computed(
     () =>
       this.title().trim().length > 0 &&
@@ -59,10 +60,12 @@ export class SurveyCreate {
     return String.fromCharCode(65 + index);
   }
 
+  /** Spalte (1 oder 2) fuer die Fragen-Grid-Anordnung: Q1/Q2 nebeneinander, Q3/Q4 darunter usw. */
   questionGridColumn(index: number): string {
     return index % 2 === 0 ? '1' : '2';
   }
 
+  /** Zeile fuer die Fragen-Grid-Anordnung, passend zu questionGridColumn. */
   questionGridRow(index: number): string {
     return String(Math.floor(index / 2) + 1);
   }
@@ -92,10 +95,12 @@ export class SurveyCreate {
     this.description.set(value);
   }
 
+  /** Leert nur den Wert; das Feld bleibt sichtbar (kein Ausblenden der ganzen Zeile). */
   resetDeadline(): void {
     this.deadline.set('');
   }
 
+  /** Leert nur den Wert; das Feld bleibt sichtbar (kein Ausblenden der ganzen Zeile). */
   resetDescription(): void {
     this.description.set('');
   }
@@ -117,6 +122,7 @@ export class SurveyCreate {
     this.patchQuestion(index, { allowMultipleAnswers: !current.allowMultipleAnswers });
   }
 
+  /** Fuegt eine Antwortoption hinzu, bis maximal MAX_OPTIONS erreicht ist. */
   addOption(index: number): void {
     const current = this.questions()[index].options;
     if (current.length >= MAX_OPTIONS) return;
@@ -135,6 +141,7 @@ export class SurveyCreate {
     this.patchQuestion(index, { options });
   }
 
+  /** Validiert das Formular und stoesst das Anlegen der Umfrage an. */
   async publish(): Promise<void> {
     if (!this.isValid()) {
       this.errorMessage.set('Bitte fülle alle Pflichtfelder aus.');
@@ -145,11 +152,13 @@ export class SurveyCreate {
     await this.trySubmit();
   }
 
+  /** Blendet den Erfolgs-Dialog aus und navigiert zur Startseite. */
   dismissPublishedToast(): void {
     this.showPublishedToast.set(false);
     this.router.navigate(['/']);
   }
 
+  /** Loescht den lokal gespeicherten Formular-Entwurf (nach Publish oder Cancel). */
   clearDraft(): void {
     localStorage.removeItem(DRAFT_STORAGE_KEY);
   }
@@ -198,6 +207,7 @@ export class SurveyCreate {
     return { questionText: '', allowMultipleAnswers: false, options: ['', ''] };
   }
 
+  /** Spiegelt den aktuellen Formularzustand in localStorage, ausgeloest bei jeder Aenderung. */
   private saveDraft(): void {
     const draft: DraftData = {
       category: this.category(),
@@ -209,6 +219,7 @@ export class SurveyCreate {
     localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(draft));
   }
 
+  /** Laedt einen zuvor gespeicherten Entwurf; gibt ein leeres Objekt zurueck, falls keiner existiert. */
   private loadDraft(): Partial<DraftData> {
     try {
       const raw = localStorage.getItem(DRAFT_STORAGE_KEY);

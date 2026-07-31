@@ -66,6 +66,7 @@ export class SurveyService {
     if (error) throw error;
   }
 
+  /** Legt die `surveys`-Zeile an und gibt deren ID zurueck. */
   private async insertSurvey(input: CreateSurveyInput): Promise<string> {
     const { data, error } = await this.supabase
       .from('surveys')
@@ -77,6 +78,7 @@ export class SurveyService {
     return data.id;
   }
 
+  /** Baut das Insert-Objekt fuer die `surveys`-Tabelle aus dem Formular-Input. */
   private toSurveyInsert(input: CreateSurveyInput): {
     category: string;
     title: string;
@@ -91,6 +93,7 @@ export class SurveyService {
     };
   }
 
+  /** Legt alle Fragen einer Umfrage in Reihenfolge an, inkl. ihrer Antwortoptionen. */
   private async insertQuestions(
     surveyId: string,
     questions: CreateSurveyInput['questions'],
@@ -101,6 +104,7 @@ export class SurveyService {
     }
   }
 
+  /** Legt eine einzelne Frage an und gibt deren ID zurueck. */
   private async insertQuestion(
     surveyId: string,
     question: CreateSurveyInput['questions'][number],
@@ -121,12 +125,14 @@ export class SurveyService {
     return data.id;
   }
 
+  /** Legt die Antwortoptionen fuer eine Frage an. */
   private async insertOptions(questionId: string, labels: string[]): Promise<void> {
     const rows = labels.map((label) => ({ question_id: questionId, label }));
     const { error } = await this.supabase.from('survey_options').insert(rows);
     if (error) throw error;
   }
 
+  /** Mappt eine rohe `surveys`-Zeile auf das App-Modell inkl. abgeleitetem Status. */
   private toSurvey(row: SurveyRow): Survey {
     const deadline = new Date(row.deadline);
     return {
@@ -139,6 +145,7 @@ export class SurveyService {
     };
   }
 
+  /** Mappt eine rohe `surveys`-Zeile inkl. verschachtelter Fragen auf das App-Modell. */
   private toSurveyDetail(row: SurveyRowWithQuestions): SurveyDetail {
     return {
       ...this.toSurvey(row),
@@ -146,6 +153,7 @@ export class SurveyService {
     };
   }
 
+  /** Mappt eine rohe `survey_questions`-Zeile inkl. Optionen auf das App-Modell. */
   private toQuestion(row: SurveyQuestionRowWithOptions): SurveyQuestion {
     return {
       id: row.id,
@@ -155,14 +163,17 @@ export class SurveyService {
     };
   }
 
+  /** Leitet den Umfrage-Status aus der Deadline ab, statt ihn separat zu speichern. */
   private statusFor(deadline: Date): SurveyStatus {
     return deadline.getTime() < Date.now() ? 'closed' : 'ongoing';
   }
 
+  /** Mappt eine rohe `survey_options`-Zeile inkl. Stimmenzahl auf das App-Modell. */
   private toOption(row: SurveyOptionRow): SurveyOption {
     return { id: row.id, label: row.label, voteCount: row.votes.length };
   }
 
+  /** Platzhalter-Deadline fuer Umfragen ohne gesetztes Enddatum. */
   private farFutureDate(): Date {
     return new Date('2100-01-01');
   }
