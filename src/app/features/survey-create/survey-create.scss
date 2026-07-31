@@ -37,17 +37,30 @@
 }
 
 .create-survey {
-  &__header {
+  &__topbar {
+    background: var(--color-surface);
+    border-radius: 24px;
+    padding: var(--space-sm) var(--space-md);
+    margin-bottom: var(--space-md);
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__topbar-row {
+    display: flex;
     align-items: center;
-    margin-bottom: var(--space-sm);
+    justify-content: space-between;
+    gap: var(--space-md);
   }
 
   &__heading {
     color: var(--color-accent);
-    font-size: 1.75rem;
-    margin-bottom: var(--space-md);
+    font-family: 'Nerko One', cursive;
+    font-weight: 400;
+    font-size: 2rem;
+    line-height: 1.15;
+    margin: 0;
   }
 
   &__panel {

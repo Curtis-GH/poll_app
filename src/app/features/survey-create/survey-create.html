@@ -1,13 +1,14 @@
 <div class="create-survey">
-  <div class="create-survey__header">
+  <div class="create-survey__topbar">
     <span class="badge">Draft</span>
-    <a class="button button--muted cancel-button" routerLink="/" (click)="clearDraft()">
-      <span class="cancel-button__text">Cancel</span>
-      ✕
-    </a>
+    <div class="create-survey__topbar-row">
+      <h1 class="create-survey__heading">Create new survey</h1>
+      <a class="button button--muted cancel-button" routerLink="/" (click)="clearDraft()">
+        <span class="cancel-button__text">Cancel</span>
+        ✕
+      </a>
+    </div>
   </div>
-
-  <h1 class="create-survey__heading">Create new survey</h1>
 
   <div class="create-survey__panel">
     <div class="field field--name">
