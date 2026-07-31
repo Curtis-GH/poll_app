@@ -128,6 +128,15 @@ export class SurveyCreate implements OnDestroy {
     this.questions.update((qs) => qs.filter((_, i) => i !== index));
   }
 
+  /** Removes the question if there's more than one; otherwise just clears its text (at least one question is required). */
+  onQuestionTrashClick(index: number): void {
+    if (this.questions().length > 1) {
+      this.removeQuestion(index);
+    } else {
+      this.patchQuestion(index, { questionText: '' });
+    }
+  }
+
   onQuestionTextChange(index: number, value: string): void {
     this.patchQuestion(index, { questionText: value });
   }

@@ -32,16 +32,8 @@
     </div>
 
     <div class="field field--meta">
-      <div class="field field--deadline">
-        <label class="field__label" for="survey-deadline">Set end date (optional)</label>
-        <button
-          type="button"
-          class="icon-button field__icon"
-          (click)="resetDeadline()"
-          aria-label="Reset end date"
-        >
-          <img src="images/desktop/icon-delete.svg" alt="" />
-        </button>
+      <label class="field__label" for="survey-deadline">Set end date (optional)</label>
+      <div class="deadline-row">
         <input
           class="field__input"
           id="survey-deadline"
@@ -50,47 +42,52 @@
           [value]="deadline()"
           (input)="onDeadlineChange($any($event.target).value)"
         />
+        <button
+          type="button"
+          class="icon-button"
+          (click)="resetDeadline()"
+          aria-label="Reset end date"
+        >
+          <img src="images/desktop/icon-delete.svg" alt="" />
+        </button>
       </div>
 
-      <div class="field field--category">
-        <span class="field__label" id="category-label">Choose category</span>
-        <div class="category-select">
+      <div class="category-select">
+        <button
+          type="button"
+          class="category-select__trigger"
+          [class.category-select__trigger--open]="isCategoryMenuOpen()"
+          aria-label="Choose category"
+          aria-haspopup="listbox"
+          [attr.aria-expanded]="isCategoryMenuOpen()"
+          (click)="toggleCategoryMenu()"
+        >
+          {{ category() || 'Choose category' }}
+          <span class="category-select__chevron"></span>
+        </button>
+
+        @if (isCategoryMenuOpen()) {
           <button
             type="button"
-            class="category-select__trigger"
-            [class.category-select__trigger--open]="isCategoryMenuOpen()"
-            aria-labelledby="category-label"
-            aria-haspopup="listbox"
-            [attr.aria-expanded]="isCategoryMenuOpen()"
-            (click)="toggleCategoryMenu()"
-          >
-            {{ category() || 'Choose category' }}
-            <span class="category-select__chevron"></span>
-          </button>
-
-          @if (isCategoryMenuOpen()) {
-            <button
-              type="button"
-              class="category-select__backdrop"
-              aria-label="Close category menu"
-              (click)="closeCategoryMenu()"
-            ></button>
-            <ul class="category-select__menu">
-              @for (option of categories; track option) {
-                <li>
-                  <button
-                    type="button"
-                    class="category-select__option"
-                    [class.category-select__option--active]="category() === option"
-                    (click)="selectCategory(option)"
-                  >
-                    {{ option }}
-                  </button>
-                </li>
-              }
-            </ul>
-          }
-        </div>
+            class="category-select__backdrop"
+            aria-label="Close category menu"
+            (click)="closeCategoryMenu()"
+          ></button>
+          <ul class="category-select__menu">
+            @for (option of categories; track option) {
+              <li>
+                <button
+                  type="button"
+                  class="category-select__option"
+                  [class.category-select__option--active]="category() === option"
+                  (click)="selectCategory(option)"
+                >
+                  {{ option }}
+                </button>
+              </li>
+            }
+          </ul>
+        }
       </div>
     </div>
 
@@ -122,16 +119,14 @@
         >
           <div class="field__label-row">
             <label [for]="'question-' + qIndex">{{ qIndex + 1 }}. Question</label>
-            @if (questions().length > 1) {
-              <button
-                type="button"
-                class="icon-button"
-                (click)="removeQuestion(qIndex)"
-                aria-label="Remove question"
-              >
-                <img src="images/desktop/icon-delete.svg" alt="" />
-              </button>
-            }
+            <button
+              type="button"
+              class="icon-button"
+              (click)="onQuestionTrashClick(qIndex)"
+              aria-label="Clear question"
+            >
+              <img src="images/desktop/icon-delete.svg" alt="" />
+            </button>
           </div>
           <input
             [id]="'question-' + qIndex"
@@ -179,8 +174,7 @@
           @if (question.options.length < maxOptions) {
             <div class="add-answer-row">
               <button type="button" class="link-button" (click)="addOption(qIndex)">
-                Add answer
-                <span class="link-button__plus">+</span>
+                Add answer +
               </button>
               <span class="add-answer-row__hint"
                 >You can add up to {{ maxOptions }} answer fields.</span
