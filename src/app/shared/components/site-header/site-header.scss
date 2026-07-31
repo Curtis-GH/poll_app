@@ -3,7 +3,11 @@
   margin: 0 auto;
   padding: var(--space-md) var(--space-md) 0;
 
-  @media (min-width: 960px) {
+  @media (min-width: 600px) {
+    padding: var(--space-lg) 48px 0;
+  }
+
+  @media (min-width: 1024px) {
     padding: var(--space-lg) 96px 0;
   }
 
@@ -18,7 +22,11 @@
     height: 32px;
     width: auto;
 
-    @media (min-width: 960px) {
+    @media (min-width: 600px) {
+      height: 48px;
+    }
+
+    @media (min-width: 1024px) {
       height: 72px;
     }
   }

@@ -213,7 +213,7 @@
   }
 }
 
-@media (min-width: 960px) {
+@media (min-width: 600px) {
   .survey-detail__grid {
     flex-direction: row;
     align-items: flex-start;
@@ -238,7 +238,7 @@
   }
 }
 
-@media (max-width: 959px) {
+@media (max-width: 599px) {
   .results-toggle {
     display: block;
   }
