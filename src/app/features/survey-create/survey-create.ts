@@ -20,6 +20,7 @@ interface DraftData {
 }
 
 const MAX_OPTIONS = 6;
+const MIN_OPTIONS = 2;
 const DRAFT_STORAGE_KEY = 'poll-app:survey-draft';
 
 /** Char code of 'A', used as the base for lettering answer options (A, B, C, ...). */
@@ -158,15 +159,15 @@ export class SurveyCreate implements OnDestroy {
     this.patchQuestion(index, { options });
   }
 
-  /** Removes the option if more than 2 remain; otherwise just clears its text (at least 2 options are required). */
+  /** For the fixed A/B options (index < MIN_OPTIONS), just clears the text; for added options, removes the row. */
   onOptionTrashClick(index: number, optionIndex: number): void {
-    if (this.questions()[index].options.length > 2) {
-      this.removeOption(index, optionIndex);
-    } else {
+    if (optionIndex < MIN_OPTIONS) {
       const options = this.questions()[index].options.map((o, i) =>
         i === optionIndex ? '' : o,
       );
       this.patchQuestion(index, { options });
+    } else {
+      this.removeOption(index, optionIndex);
     }
   }
 
@@ -236,7 +237,7 @@ export class SurveyCreate implements OnDestroy {
 
   private isQuestionValid(q: QuestionForm): boolean {
     const filledOptions = q.options.filter((o) => o.trim().length > 0);
-    return q.questionText.trim().length > 0 && filledOptions.length >= 2;
+    return q.questionText.trim().length > 0 && filledOptions.length >= MIN_OPTIONS;
   }
 
   private emptyQuestion(): QuestionForm {
