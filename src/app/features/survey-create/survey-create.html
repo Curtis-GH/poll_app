@@ -1,51 +1,52 @@
 <div class="create-survey">
   <div class="create-survey__header">
     <span class="badge">Draft</span>
-    <a class="button button--muted" routerLink="/" (click)="clearDraft()">Cancel ✕</a>
+    <a class="button button--muted cancel-button" routerLink="/" (click)="clearDraft()">
+      <span class="cancel-button__text">Cancel</span>
+      ✕
+    </a>
   </div>
 
   <h1 class="create-survey__heading">Create new survey</h1>
 
   <div class="create-survey__panel">
     <div class="field field--name">
-      <label for="survey-name">Survey name</label>
-      <div class="field__input-row">
-        <input
-          id="survey-name"
-          type="text"
-          [value]="title()"
-          (input)="onTitleChange($any($event.target).value)"
-        />
-        <button
-          type="button"
-          class="icon-button"
-          (click)="onTitleChange('')"
-          aria-label="Clear survey name"
-        >
-          <img src="images/desktop/icon-delete.svg" alt="" />
-        </button>
-      </div>
+      <label class="field__label" for="survey-name">Survey name</label>
+      <button
+        type="button"
+        class="icon-button field__icon"
+        (click)="onTitleChange('')"
+        aria-label="Clear survey name"
+      >
+        <img src="images/desktop/icon-delete.svg" alt="" />
+      </button>
+      <input
+        class="field__input"
+        id="survey-name"
+        type="text"
+        [value]="title()"
+        (input)="onTitleChange($any($event.target).value)"
+      />
     </div>
 
     <div class="field field--meta">
       <div class="field field--deadline">
-        <label for="survey-deadline">Set end date (optional)</label>
-        <div class="field__input-row">
-          <input
-            id="survey-deadline"
-            type="date"
-            [value]="deadline()"
-            (input)="onDeadlineChange($any($event.target).value)"
-          />
-          <button
-            type="button"
-            class="icon-button"
-            (click)="resetDeadline()"
-            aria-label="Reset end date"
-          >
-            <img src="images/desktop/icon-delete.svg" alt="" />
-          </button>
-        </div>
+        <label class="field__label" for="survey-deadline">Set end date (optional)</label>
+        <button
+          type="button"
+          class="icon-button field__icon"
+          (click)="resetDeadline()"
+          aria-label="Reset end date"
+        >
+          <img src="images/desktop/icon-delete.svg" alt="" />
+        </button>
+        <input
+          class="field__input"
+          id="survey-deadline"
+          type="date"
+          [value]="deadline()"
+          (input)="onDeadlineChange($any($event.target).value)"
+        />
       </div>
 
       <div class="field field--category">
@@ -88,23 +89,22 @@
     </div>
 
     <div class="field field--description">
-      <label for="survey-description">Describing text (optional)</label>
-      <div class="field__input-row field__input-row--top">
-        <textarea
-          id="survey-description"
-          rows="3"
-          [value]="description()"
-          (input)="onDescriptionChange($any($event.target).value)"
-        ></textarea>
-        <button
-          type="button"
-          class="icon-button"
-          (click)="resetDescription()"
-          aria-label="Clear description"
-        >
-          <img src="images/desktop/icon-delete.svg" alt="" />
-        </button>
-      </div>
+      <label class="field__label" for="survey-description">Describing text (optional)</label>
+      <button
+        type="button"
+        class="icon-button field__icon"
+        (click)="resetDescription()"
+        aria-label="Clear description"
+      >
+        <img src="images/desktop/icon-delete.svg" alt="" />
+      </button>
+      <textarea
+        class="field__input"
+        id="survey-description"
+        rows="3"
+        [value]="description()"
+        (input)="onDescriptionChange($any($event.target).value)"
+      ></textarea>
     </div>
 
     <div class="questions-column">
@@ -150,21 +150,22 @@
             @for (option of question.options; track $index; let oIndex = $index) {
               <div class="option-row">
                 <span class="option-row__letter">{{ optionLetter(oIndex) }}.</span>
-                <input
-                  type="text"
-                  [value]="option"
-                  (input)="onOptionChange(qIndex, oIndex, $any($event.target).value)"
-                />
                 @if (question.options.length > 2) {
                   <button
                     type="button"
-                    class="icon-button"
+                    class="icon-button option-row__icon"
                     (click)="removeOption(qIndex, oIndex)"
                     aria-label="Remove answer"
                   >
                     <img src="images/desktop/icon-delete.svg" alt="" />
                   </button>
                 }
+                <input
+                  class="option-row__input"
+                  type="text"
+                  [value]="option"
+                  (input)="onOptionChange(qIndex, oIndex, $any($event.target).value)"
+                />
               </div>
             }
           </div>
@@ -174,7 +175,9 @@
               <button type="button" class="link-button" (click)="addOption(qIndex)">
                 Add answer +
               </button>
-              <span class="add-answer-row__hint">You can add up to {{ maxOptions }} answer fields.</span>
+              <span class="add-answer-row__hint"
+                >You can add up to {{ maxOptions }} answer fields.</span
+              >
             </div>
           }
         </div>
