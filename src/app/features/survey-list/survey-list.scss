@@ -283,6 +283,21 @@
 
 .survey-grid-scroll {
   overflow-y: auto;
+  max-height: 520px;
+  padding-right: var(--space-xs);
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-accent);
+    border-radius: var(--radius-pill);
+  }
 }
 
 .survey-grid {
@@ -358,19 +373,6 @@
   .survey-grid-scroll {
     max-height: 512px;
     padding-right: var(--space-sm);
-
-    &::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    &::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: var(--color-accent);
-      border-radius: var(--radius-pill);
-    }
   }
 }
 
