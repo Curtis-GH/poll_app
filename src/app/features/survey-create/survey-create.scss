@@ -54,6 +54,8 @@
 
   &__heading {
     color: var(--color-accent);
+    font-family: 'Nerko One', cursive;
+    font-weight: 400;
     font-size: 56px;
     margin-bottom: 0;
   }
@@ -129,7 +131,7 @@
     'label icon'
     'input input';
   column-gap: var(--space-xs);
-  row-gap: var(--space-xs);
+  row-gap: 0;
 }
 
 .field__label {
@@ -410,13 +412,13 @@ textarea {
   .field--meta {
     grid-area: meta;
     display: grid;
-    grid-template-columns: 160px 1fr;
+    grid-template-columns: auto 1fr;
     grid-template-areas:
-      'deadline-label .'
-      'deadline-input category';
+      'deadline-label category'
+      'deadline-input .';
     column-gap: var(--space-md);
     row-gap: var(--space-xs);
-    align-items: end;
+    align-items: center;
   }
 
   .field--meta > .field__label {
@@ -446,6 +448,7 @@ textarea {
 
   .field--description {
     align-items: start;
+    align-content: start;
   }
 
   .option-row {
