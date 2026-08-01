@@ -13,7 +13,7 @@
     grid-area: heading;
     font-family: 'Nerko One', cursive;
     font-weight: 400;
-    font-size: 2.2rem;
+    font-size: 62px;
     line-height: 1.15;
     letter-spacing: 0;
     color: var(--color-accent);
@@ -41,6 +41,7 @@
 
   &__cta {
     grid-area: cta;
+    justify-self: center;
   }
 }
 
@@ -333,6 +334,10 @@
     &__illustration {
       max-width: 280px;
     }
+
+    &__cta {
+      justify-self: start;
+    }
   }
 
   .surveys {
@@ -394,6 +399,10 @@
 
     &__illustration {
       max-width: 380px;
+    }
+
+    &__cta {
+      justify-self: start;
     }
   }
 
