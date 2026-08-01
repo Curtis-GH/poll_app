@@ -282,6 +282,11 @@
     column-gap: var(--space-lg);
   }
 
+  .survey-detail__category {
+    /* Extra clearance from the large top-right panel curve, to match the flat left-edge gap. */
+    margin-right: var(--space-md);
+  }
+
   .survey-detail__results {
     flex: 1 1 40%;
   }
