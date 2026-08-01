@@ -1,27 +1,26 @@
 .hero {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  display: grid;
+  grid-template-areas:
+    'heading'
+    'illustration'
+    'subtext'
+    'cta';
+  justify-items: start;
   gap: var(--space-md);
   padding: var(--space-lg) var(--space-md);
 
-  &__text {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
   &__heading {
+    grid-area: heading;
     font-family: 'Nerko One', cursive;
     font-weight: 400;
     font-size: 2.2rem;
     line-height: 1.15;
     letter-spacing: 0;
     color: var(--color-accent);
-    margin-bottom: var(--space-md);
   }
 
   &__subtext {
+    grid-area: subtext;
     font-family: 'Mulish', sans-serif;
     font-weight: 600;
     font-size: 1rem;
@@ -29,15 +28,19 @@
     letter-spacing: 0;
     color: var(--color-text-on-dark);
     max-width: 40ch;
-    margin-bottom: var(--space-sm);
   }
 
   &__illustration {
+    grid-area: illustration;
     position: relative;
     width: 100%;
     max-width: 320px;
     aspect-ratio: 1 / 1;
-    align-self: center;
+    justify-self: center;
+  }
+
+  &__cta {
+    grid-area: cta;
   }
 }
 
@@ -308,25 +311,23 @@
 
 @media (min-width: 600px) {
   .hero {
-    flex-direction: row;
-    justify-content: space-between;
+    grid-template-columns: 55% 1fr;
+    grid-template-areas:
+      'heading illustration'
+      'subtext illustration'
+      'cta illustration';
     align-items: center;
+    column-gap: var(--space-lg);
+    row-gap: 24px;
     padding: 48px 48px var(--space-lg);
-
-    &__text {
-      flex: 0 0 55%;
-      width: 55%;
-    }
 
     &__heading {
       font-size: 44px;
       line-height: 1.1;
-      margin-bottom: 24px;
     }
 
     &__subtext {
       font-size: 16px;
-      margin-bottom: 24px;
     }
 
     &__illustration {
@@ -378,22 +379,17 @@
 
 @media (min-width: 1024px) {
   .hero {
+    grid-template-columns: 58% 1fr;
+    row-gap: 32px;
     padding: 96px 96px var(--space-lg);
-
-    &__text {
-      flex: 0 0 58%;
-      width: 58%;
-    }
 
     &__heading {
       font-size: 100px;
       line-height: 89px;
-      margin-bottom: 48px;
     }
 
     &__subtext {
       font-size: 24px;
-      margin-bottom: 32px;
     }
 
     &__illustration {
