@@ -29,8 +29,12 @@
   &__panel {
     background: var(--color-surface-light);
     color: var(--color-text-on-light);
-    border-radius: var(--radius-lg) 56px var(--radius-lg) var(--radius-lg);
+    border-radius: var(--radius-lg) 72px var(--radius-lg) var(--radius-lg);
     padding: var(--space-md);
+
+    @media (min-width: 600px) {
+      border-radius: var(--radius-lg) 140px var(--radius-lg) var(--radius-lg);
+    }
   }
 
   &__panel-header {
