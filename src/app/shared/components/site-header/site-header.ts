@@ -14,4 +14,6 @@ export type SiteHeaderVariant = 'dark' | 'light';
 export class SiteHeader {
   /** 'dark' shows the orange logo (homescreen), 'light' shows the dark logo (light pages). */
   readonly variant = input<SiteHeaderVariant>('dark');
+  /** Shows a "Create survey" button next to the logo (desktop only). */
+  readonly showCreateButton = input<boolean>(false);
 }

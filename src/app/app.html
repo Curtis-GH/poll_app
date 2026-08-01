@@ -1,6 +1,9 @@
 <div [class.theme-light]="!isDarkTheme()">
   @if (!isHeaderHidden()) {
-    <app-site-header [variant]="isDarkTheme() ? 'dark' : 'light'"></app-site-header>
+    <app-site-header
+      [variant]="isDarkTheme() ? 'dark' : 'light'"
+      [showCreateButton]="showHeaderCreateButton()"
+    ></app-site-header>
   }
   <main>
     <router-outlet></router-outlet>

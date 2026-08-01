@@ -10,4 +10,11 @@
       alt="Poll App Logo"
     />
   </a>
+
+  @if (showCreateButton()) {
+    <a class="site-header__create-button" routerLink="/surveys/new">
+      Create survey
+      <img class="site-header__create-button-icon" src="images/desktop/icon-plus-circle.svg" alt="" />
+    </a>
+  }
 </header>

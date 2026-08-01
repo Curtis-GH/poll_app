@@ -1,5 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { SurveyService } from '../../core/services/survey';
 import { SurveyDetails, SurveyOption, SurveyQuestion } from '../../models/survey.model';
 import { formatDeadlineDate } from '../../shared/utils/deadline.util';
@@ -14,7 +14,6 @@ const OPTION_LETTER_BASE_CHAR_CODE = 65;
 /** Detail/voting view of a single survey: lets the user vote and shows live results. */
 @Component({
   selector: 'app-survey-detail',
-  imports: [RouterLink],
   templateUrl: './survey-detail.html',
   styleUrl: './survey-detail.scss',
 })

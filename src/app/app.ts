@@ -8,6 +8,9 @@ const DARK_ROUTES = ['/', '/surveys/new'];
 /** Routes that hide the site header entirely, per the Create Survey Figma frame. */
 const HEADER_HIDDEN_ROUTES = ['/surveys/new'];
 
+/** Matches a survey detail route (`/surveys/:id`), excluding the create-survey route itself. */
+const SURVEY_DETAIL_ROUTE = /^\/surveys\/(?!new$)[^/]+$/;
+
 /** Root component: hosts the router outlet and switches the site header theme by route. */
 @Component({
   selector: 'app-root',
@@ -24,12 +27,16 @@ export class App {
   /** True on routes where the site header/logo should not be shown. */
   readonly isHeaderHidden = signal(HEADER_HIDDEN_ROUTES.includes(this.router.url));
 
+  /** True on a survey detail page, where the header shows a "Create survey" button (desktop only). */
+  readonly showHeaderCreateButton = signal(SURVEY_DETAIL_ROUTE.test(this.router.url));
+
   constructor() {
-    /** Keeps isDarkTheme/isHeaderHidden in sync with the current route on every navigation. */
+    /** Keeps the route-derived header/theme signals in sync on every navigation. */
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.isDarkTheme.set(DARK_ROUTES.includes(event.urlAfterRedirects));
         this.isHeaderHidden.set(HEADER_HIDDEN_ROUTES.includes(event.urlAfterRedirects));
+        this.showHeaderCreateButton.set(SURVEY_DETAIL_ROUTE.test(event.urlAfterRedirects));
       }
     });
   }
