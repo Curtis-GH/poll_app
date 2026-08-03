@@ -1,5 +1,9 @@
 # PollApp
 
+PollApp is a small web app for creating and sharing surveys. Users can create a survey with one or more questions (single- or multi-choice answers), share it, and let others vote. Each survey has a live results view that updates as votes come in, plus a homescreen listing all surveys with category filtering and sorting.
+
+Built with Angular (standalone components) and Supabase (Postgres) as the backend.
+
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.1.0.
 
 ## Development server

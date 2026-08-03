@@ -19,10 +19,12 @@ interface DraftData {
   questions: QuestionForm[];
 }
 
+/** Maximum number of answer options allowed per question. */
 const MAX_OPTIONS = 6;
+/** Minimum number of answer options required per question (A and B are always kept). */
 const MIN_OPTIONS = 2;
+/** localStorage key the in-progress form draft is saved under. */
 const DRAFT_STORAGE_KEY = 'poll-app:survey-draft';
-
 /** Char code of 'A', used as the base for lettering answer options (A, B, C, ...). */
 const OPTION_LETTER_BASE_CHAR_CODE = 65;
 
@@ -52,6 +54,7 @@ export class SurveyCreate implements OnDestroy {
   readonly errorMessage = signal<string | null>(null);
   readonly showPublishedToast = signal(false);
   readonly isCategoryMenuOpen = signal(false);
+  /** Id of the survey created by the last successful publish; used to redirect once the toast closes. */
   private createdSurveyId: string | null = null;
 
   /** True when title, category and all questions satisfy the required fields. */
@@ -71,42 +74,72 @@ export class SurveyCreate implements OnDestroy {
     this.clearDraft();
   }
 
-  /** Derives the option letter (A, B, C, ...) from its position within the question. */
+  /**
+   * Derives the option letter (A, B, C, ...) from its position within the question.
+   * @param index - zero-based position of the option within its question.
+   * @returns the single-letter label for that position.
+   */
   optionLetter(index: number): string {
     return String.fromCharCode(OPTION_LETTER_BASE_CHAR_CODE + index);
   }
 
-  /** Column (1 or 2) for the question grid layout: Q1/Q2 side by side, Q3/Q4 below, etc. */
+  /**
+   * Column (1 or 2) for the question grid layout: Q1/Q2 side by side, Q3/Q4 below, etc.
+   * @param index - zero-based position of the question in the list.
+   * @returns '1' or '2' as a grid-column value.
+   */
   questionGridColumn(index: number): string {
     return index % 2 === 0 ? '1' : '2';
   }
 
-  /** Row for the question grid layout, matching questionGridColumn. */
+  /**
+   * Row for the question grid layout, matching questionGridColumn.
+   * @param index - zero-based position of the question in the list.
+   * @returns the grid-row value as a string.
+   */
   questionGridRow(index: number): string {
     return String(Math.floor(index / 2) + 1);
   }
 
+  /**
+   * Updates the survey title.
+   * @param value - the new title text.
+   */
   onTitleChange(value: string): void {
     this.title.set(value);
   }
 
+  /** Opens or closes the category dropdown menu. */
   toggleCategoryMenu(): void {
     this.isCategoryMenuOpen.update((open) => !open);
   }
 
+  /** Closes the category dropdown menu. */
   closeCategoryMenu(): void {
     this.isCategoryMenuOpen.set(false);
   }
 
+  /**
+   * Selects a category and closes the dropdown menu.
+   * @param value - the chosen category name.
+   */
   selectCategory(value: string): void {
     this.category.set(value);
     this.isCategoryMenuOpen.set(false);
   }
 
+  /**
+   * Updates the survey deadline.
+   * @param value - the new deadline as an ISO date string (YYYY-MM-DD).
+   */
   onDeadlineChange(value: string): void {
     this.deadline.set(value);
   }
 
+  /**
+   * Updates the survey description.
+   * @param value - the new description text.
+   */
   onDescriptionChange(value: string): void {
     this.description.set(value);
   }
@@ -121,15 +154,23 @@ export class SurveyCreate implements OnDestroy {
     this.description.set('');
   }
 
+  /** Appends a new, empty question to the form. */
   addQuestion(): void {
     this.questions.update((qs) => [...qs, this.emptyQuestion()]);
   }
 
+  /**
+   * Removes the question at the given index.
+   * @param index - zero-based position of the question to remove.
+   */
   removeQuestion(index: number): void {
     this.questions.update((qs) => qs.filter((_, i) => i !== index));
   }
 
-  /** Question 1 (index 0) always just clears every input field in its block; later questions always remove the whole block. */
+  /**
+   * Question 1 (index 0) always just clears every input field in its block; later questions always remove the whole block.
+   * @param index - zero-based position of the question whose trash icon was clicked.
+   */
   onQuestionTrashClick(index: number): void {
     if (index === 0) {
       const current = this.questions()[0];
@@ -142,28 +183,49 @@ export class SurveyCreate implements OnDestroy {
     }
   }
 
+  /**
+   * Updates the text of a question.
+   * @param index - zero-based position of the question.
+   * @param value - the new question text.
+   */
   onQuestionTextChange(index: number, value: string): void {
     this.patchQuestion(index, { questionText: value });
   }
 
+  /**
+   * Toggles whether a question allows selecting more than one answer.
+   * @param index - zero-based position of the question.
+   */
   toggleAllowMultiple(index: number): void {
     const current = this.questions()[index];
     this.patchQuestion(index, { allowMultipleAnswers: !current.allowMultipleAnswers });
   }
 
-  /** Adds an answer option, up to a maximum of MAX_OPTIONS. */
+  /**
+   * Adds an answer option, up to a maximum of MAX_OPTIONS.
+   * @param index - zero-based position of the question to add an option to.
+   */
   addOption(index: number): void {
     const current = this.questions()[index].options;
     if (current.length >= MAX_OPTIONS) return;
     this.patchQuestion(index, { options: [...current, ''] });
   }
 
+  /**
+   * Removes an answer option from a question.
+   * @param index - zero-based position of the question.
+   * @param optionIndex - zero-based position of the option to remove.
+   */
   removeOption(index: number, optionIndex: number): void {
     const options = this.questions()[index].options.filter((_, i) => i !== optionIndex);
     this.patchQuestion(index, { options });
   }
 
-  /** For the fixed A/B options (index < MIN_OPTIONS), just clears the text; for added options, removes the row. */
+  /**
+   * For the fixed A/B options (index < MIN_OPTIONS), just clears the text; for added options, removes the row.
+   * @param index - zero-based position of the question.
+   * @param optionIndex - zero-based position of the option whose trash icon was clicked.
+   */
   onOptionTrashClick(index: number, optionIndex: number): void {
     if (optionIndex < MIN_OPTIONS) {
       const options = this.questions()[index].options.map((o, i) =>
@@ -175,6 +237,12 @@ export class SurveyCreate implements OnDestroy {
     }
   }
 
+  /**
+   * Updates the text of an answer option.
+   * @param index - zero-based position of the question.
+   * @param optionIndex - zero-based position of the option.
+   * @param value - the new option text.
+   */
   onOptionChange(index: number, optionIndex: number, value: string): void {
     const options = this.questions()[index].options.map((o, i) =>
       i === optionIndex ? value : o,
@@ -204,6 +272,7 @@ export class SurveyCreate implements OnDestroy {
     localStorage.removeItem(DRAFT_STORAGE_KEY);
   }
 
+  /** Creates the survey via the backend and shows the success overlay, or an error message on failure. */
   private async trySubmit(): Promise<void> {
     try {
       this.createdSurveyId = await this.surveyService.createSurvey(this.buildInput());
@@ -217,6 +286,7 @@ export class SurveyCreate implements OnDestroy {
     }
   }
 
+  /** @returns the current form state mapped to the shape the backend expects. */
   private buildInput(): CreateSurveyInput {
     return {
       category: this.category(),
@@ -227,6 +297,11 @@ export class SurveyCreate implements OnDestroy {
     };
   }
 
+  /**
+   * Trims and filters a question's form state into the backend's question input shape.
+   * @param q - the question's current form state.
+   * @returns the question input, with blank answer options removed.
+   */
   private toQuestionInput(q: QuestionForm): CreateSurveyInput['questions'][number] {
     return {
       questionText: q.questionText.trim(),
@@ -235,15 +310,26 @@ export class SurveyCreate implements OnDestroy {
     };
   }
 
+  /**
+   * Applies a partial update to the question at the given index.
+   * @param index - zero-based position of the question to update.
+   * @param patch - the fields to merge into that question.
+   */
   private patchQuestion(index: number, patch: Partial<QuestionForm>): void {
     this.questions.update((qs) => qs.map((q, i) => (i === index ? { ...q, ...patch } : q)));
   }
 
+  /**
+   * Checks whether a question has text and at least MIN_OPTIONS filled-in answers.
+   * @param q - the question's current form state.
+   * @returns true if the question satisfies the required fields.
+   */
   private isQuestionValid(q: QuestionForm): boolean {
     const filledOptions = q.options.filter((o) => o.trim().length > 0);
     return q.questionText.trim().length > 0 && filledOptions.length >= MIN_OPTIONS;
   }
 
+  /** @returns a fresh, empty question with the minimum number of blank answer options. */
   private emptyQuestion(): QuestionForm {
     return { questionText: '', allowMultipleAnswers: false, options: ['', ''] };
   }
@@ -260,7 +346,7 @@ export class SurveyCreate implements OnDestroy {
     localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(draft));
   }
 
-  /** Loads a previously saved draft; returns an empty object if none exists. */
+  /** @returns a previously saved draft, or an empty object if none exists. */
   private loadDraft(): Partial<DraftData> {
     try {
       const raw = localStorage.getItem(DRAFT_STORAGE_KEY);

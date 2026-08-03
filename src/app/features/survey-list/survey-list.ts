@@ -42,25 +42,34 @@ export class SurveyList {
     this.loadSurveys();
   }
 
-  /** Switches between "Active survey" and "Past survey". */
+  /**
+   * Switches between "Active survey" and "Past survey".
+   * @param tab - the tab to switch to.
+   */
   setTab(tab: SurveyStatus): void {
     this.activeTab.set(tab);
   }
 
+  /** Opens or closes the category sort menu. */
   toggleSortMenu(): void {
     this.isSortMenuOpen.update((open) => !open);
   }
 
+  /** Closes the category sort menu. */
   closeSortMenu(): void {
     this.isSortMenuOpen.set(false);
   }
 
-  /** Selects a category to sort by; clicking the same category again clears the selection. */
+  /**
+   * Selects a category to sort by; clicking the same category again clears the selection.
+   * @param category - the category that was clicked.
+   */
   selectCategory(category: string): void {
     this.selectedCategory.set(this.selectedCategory() === category ? null : category);
     this.isSortMenuOpen.set(false);
   }
 
+  /** Loads all surveys from the backend into the `surveys` signal. */
   private async loadSurveys(): Promise<void> {
     try {
       this.surveys.set(await this.surveyService.getSurveys());
@@ -69,7 +78,12 @@ export class SurveyList {
     }
   }
 
-  /** Moves matches of the selected category to the front; order is otherwise stable. */
+  /**
+   * Moves matches of the selected category to the front; order is otherwise stable.
+   * @param surveys - the surveys to reorder.
+   * @param category - the category to bring to the front.
+   * @returns a new array with matching surveys first.
+   */
   private sortedByCategory(surveys: Survey[], category: string): Survey[] {
     return [...surveys].sort((a) => (a.category === category ? -1 : 1));
   }

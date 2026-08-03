@@ -12,13 +12,16 @@ import {
   SurveyStatus,
 } from '../../models/survey.model';
 
+/** A raw `survey_questions` row including its nested `survey_options` rows. */
 type SurveyQuestionRowWithOptions = SurveyQuestionRow & {
   survey_options: SurveyOptionRow[];
 };
+/** A raw `surveys` row including its nested `survey_questions` rows. */
 type SurveyRowWithQuestions = SurveyRow & {
   survey_questions: SurveyQuestionRowWithOptions[];
 };
 
+/** Supabase select expression for a survey plus its ordered questions, options and vote counts. */
 const DETAIL_SELECT =
   '*, survey_questions(id, survey_id, question_text, allow_multiple_answers, position, survey_options(id, question_id, label, votes(id)))';
 
@@ -27,7 +30,7 @@ const DETAIL_SELECT =
 export class SurveyService {
   private readonly supabase = inject(Supabase).client;
 
-  /** Loads all surveys (without questions/options), sorted by deadline. */
+  /** @returns all surveys (without questions/options), sorted by deadline. */
   async getSurveys(): Promise<Survey[]> {
     const { data, error } = await this.supabase
       .from('surveys')
@@ -38,7 +41,11 @@ export class SurveyService {
     return (data ?? []).map((row) => this.toSurvey(row));
   }
 
-  /** Loads one survey including all questions, options and vote counts. */
+  /**
+   * Loads one survey including all questions, options and vote counts.
+   * @param id - id of the survey to load.
+   * @returns the full survey detail.
+   */
   async getSurveyById(id: string): Promise<SurveyDetails> {
     const { data, error } = await this.supabase
       .from('surveys')
@@ -51,14 +58,21 @@ export class SurveyService {
     return this.toSurveyDetail(data);
   }
 
-  /** Creates a new survey with its questions and answer options, returning its id. */
+  /**
+   * Creates a new survey with its questions and answer options.
+   * @param input - the form input describing the survey to create.
+   * @returns the id of the newly created survey.
+   */
   async createSurvey(input: CreateSurveyInput): Promise<string> {
     const surveyId = await this.insertSurvey(input);
     await this.insertQuestions(surveyId, input.questions);
     return surveyId;
   }
 
-  /** Casts a vote for the given answer option. */
+  /**
+   * Casts a vote for the given answer option.
+   * @param optionId - id of the option being voted for.
+   */
   async castVote(optionId: string): Promise<void> {
     const { error } = await this.supabase
       .from('votes')
@@ -67,7 +81,11 @@ export class SurveyService {
     if (error) throw error;
   }
 
-  /** Inserts the `surveys` row and returns its id. */
+  /**
+   * Inserts the `surveys` row.
+   * @param input - the form input describing the survey to create.
+   * @returns the id of the inserted row.
+   */
   private async insertSurvey(input: CreateSurveyInput): Promise<string> {
     const { data, error } = await this.supabase
       .from('surveys')
@@ -79,7 +97,11 @@ export class SurveyService {
     return data.id;
   }
 
-  /** Builds the insert payload for the `surveys` table from the form input. */
+  /**
+   * Builds the insert payload for the `surveys` table from the form input.
+   * @param input - the form input describing the survey to create.
+   * @returns the row payload to insert.
+   */
   private toSurveyInsert(input: CreateSurveyInput): {
     category: string;
     title: string;
@@ -94,7 +116,11 @@ export class SurveyService {
     };
   }
 
-  /** Inserts all questions of a survey in order, including their answer options. */
+  /**
+   * Inserts all questions of a survey in order, including their answer options.
+   * @param surveyId - id of the survey the questions belong to.
+   * @param questions - the form input's list of questions.
+   */
   private async insertQuestions(
     surveyId: string,
     questions: CreateSurveyInput['questions'],
@@ -105,7 +131,13 @@ export class SurveyService {
     }
   }
 
-  /** Inserts a single question and returns its id. */
+  /**
+   * Inserts a single question.
+   * @param surveyId - id of the survey the question belongs to.
+   * @param question - the form input for this question.
+   * @param position - the question's zero-based position within the survey.
+   * @returns the id of the inserted question row.
+   */
   private async insertQuestion(
     surveyId: string,
     question: CreateSurveyInput['questions'][number],
@@ -126,14 +158,22 @@ export class SurveyService {
     return data.id;
   }
 
-  /** Inserts the answer options for a question. */
+  /**
+   * Inserts the answer options for a question.
+   * @param questionId - id of the question the options belong to.
+   * @param labels - the answer option labels to insert.
+   */
   private async insertOptions(questionId: string, labels: string[]): Promise<void> {
     const rows = labels.map((label) => ({ question_id: questionId, label }));
     const { error } = await this.supabase.from('survey_options').insert(rows);
     if (error) throw error;
   }
 
-  /** Maps a raw `surveys` row to the app model, including the derived status. */
+  /**
+   * Maps a raw `surveys` row to the app model, including the derived status.
+   * @param row - the raw `surveys` row.
+   * @returns the mapped survey summary.
+   */
   private toSurvey(row: SurveyRow): Survey {
     const deadline = new Date(row.deadline);
     return {
@@ -146,7 +186,11 @@ export class SurveyService {
     };
   }
 
-  /** Maps a raw `surveys` row including nested questions to the app model. */
+  /**
+   * Maps a raw `surveys` row including nested questions to the app model.
+   * @param row - the raw `surveys` row with its nested `survey_questions`.
+   * @returns the mapped survey detail.
+   */
   private toSurveyDetail(row: SurveyRowWithQuestions): SurveyDetails {
     return {
       ...this.toSurvey(row),
@@ -154,7 +198,11 @@ export class SurveyService {
     };
   }
 
-  /** Maps a raw `survey_questions` row including its options to the app model. */
+  /**
+   * Maps a raw `survey_questions` row including its options to the app model.
+   * @param row - the raw `survey_questions` row with its nested `survey_options`.
+   * @returns the mapped question.
+   */
   private toQuestion(row: SurveyQuestionRowWithOptions): SurveyQuestion {
     return {
       id: row.id,
@@ -164,17 +212,25 @@ export class SurveyService {
     };
   }
 
-  /** Derives the survey status from its deadline instead of storing it separately. */
+  /**
+   * Derives the survey status from its deadline instead of storing it separately.
+   * @param deadline - the survey's deadline.
+   * @returns 'closed' if the deadline has passed, otherwise 'ongoing'.
+   */
   private statusFor(deadline: Date): SurveyStatus {
     return deadline.getTime() < Date.now() ? 'closed' : 'ongoing';
   }
 
-  /** Maps a raw `survey_options` row including its vote count to the app model. */
+  /**
+   * Maps a raw `survey_options` row including its vote count to the app model.
+   * @param row - the raw `survey_options` row with its nested `votes`.
+   * @returns the mapped answer option.
+   */
   private toOption(row: SurveyOptionRow): SurveyOption {
     return { id: row.id, label: row.label, voteCount: row.votes.length };
   }
 
-  /** Placeholder deadline for surveys created without an end date. */
+  /** @returns a placeholder deadline for surveys created without an end date. */
   private farFutureDate(): Date {
     return new Date('2100-01-01');
   }

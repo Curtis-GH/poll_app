@@ -4,10 +4,11 @@ import { SurveyService } from '../../core/services/survey';
 import { SurveyDetails, SurveyOption, SurveyQuestion } from '../../models/survey.model';
 import { formatDeadlineDate } from '../../shared/utils/deadline.util';
 
+/** Maps a question id to the list of currently selected option ids for that question. */
 type SelectedOptions = Record<string, string[]>;
 
+/** localStorage key holding the ids of surveys this browser has already voted on. */
 const VOTED_SURVEYS_STORAGE_KEY = 'poll-app:voted-surveys';
-
 /** Char code of 'A', used as the base for lettering answer options (A, B, C, ...). */
 const OPTION_LETTER_BASE_CHAR_CODE = 65;
 
@@ -41,17 +42,31 @@ export class SurveyDetail {
     this.loadSurvey();
   }
 
-  /** Formats a deadline for display, e.g. "Ends on 01.09.2025". */
+  /**
+   * Formats a deadline for display, e.g. "Ends on 01.09.2025".
+   * @param deadline - the survey's deadline.
+   * @returns the formatted date string.
+   */
   formatDate(deadline: Date): string {
     return formatDeadlineDate(deadline);
   }
 
-  /** True if the given option is currently selected for the given question. */
+  /**
+   * Checks whether the given option is currently selected for the given question.
+   * @param questionId - id of the question to check.
+   * @param optionId - id of the option to check.
+   * @returns true if the option is currently selected.
+   */
   isSelected(questionId: string, optionId: string): boolean {
     return (this.selectedOptionIds()[questionId] ?? []).includes(optionId);
   }
 
-  /** Selects an answer option; toggles it if multiple answers are allowed, otherwise replaces the selection. */
+  /**
+   * Selects an answer option; toggles it if multiple answers are allowed, otherwise replaces the selection.
+   * @param questionId - id of the question the option belongs to.
+   * @param optionId - id of the option being selected.
+   * @param allowMultiple - whether the question allows more than one selected answer.
+   */
   toggleOption(questionId: string, optionId: string, allowMultiple: boolean): void {
     this.selectedOptionIds.update((map) => {
       const current = map[questionId] ?? [];
@@ -60,13 +75,23 @@ export class SurveyDetail {
     });
   }
 
-  /** Derives the option letter (A, B, C, ...) from its position within the question. */
+  /**
+   * Derives the option letter (A, B, C, ...) from its position within the question.
+   * @param question - the question the option belongs to.
+   * @param option - the option to letter.
+   * @returns the single-letter label for that option.
+   */
   optionLetterFor(question: SurveyQuestion, option: SurveyOption): string {
     const index = question.options.findIndex((o) => o.id === option.id);
     return String.fromCharCode(OPTION_LETTER_BASE_CHAR_CODE + index);
   }
 
-  /** Vote share for the option in percent, rounded, 0 if there are no votes yet. */
+  /**
+   * Vote share for the option in percent, rounded, 0 if there are no votes yet.
+   * @param question - the question the option belongs to.
+   * @param option - the option to compute the share for.
+   * @returns the rounded percentage (0-100).
+   */
   percentFor(question: SurveyQuestion, option: SurveyOption): number {
     const total = question.options.reduce(
       (sum, o) => sum + this.effectiveVoteCount(question.id, o),
@@ -79,6 +104,9 @@ export class SurveyDetail {
   /**
    * Vote count for live-preview purposes: adds a not-yet-submitted local selection
    * on top of the real count, so results already move on click, before "Complete survey".
+   * @param questionId - id of the question the option belongs to.
+   * @param option - the option to compute the effective count for.
+   * @returns the option's real vote count, plus 1 if it's locally selected but not yet submitted.
    */
   private effectiveVoteCount(questionId: string, option: SurveyOption): number {
     if (this.hasVoted()) return option.voteCount;
@@ -122,17 +150,29 @@ export class SurveyDetail {
     }
   }
 
-  /** Adds the id to the array if absent, otherwise removes it. */
+  /**
+   * Adds the id to the array if absent, otherwise removes it.
+   * @param arr - the array to toggle the id in.
+   * @param id - the id to add or remove.
+   * @returns a new array with the id toggled.
+   */
   private toggleInArray(arr: string[], id: string): string[] {
     return arr.includes(id) ? arr.filter((x) => x !== id) : [...arr, id];
   }
 
-  /** Checks whether this browser has already voted on the given survey. */
+  /**
+   * Checks whether this browser has already voted on the given survey.
+   * @param surveyId - id of the survey to check.
+   * @returns true if this browser has already voted on it.
+   */
   private hasAlreadyVoted(surveyId: string): boolean {
     return this.readVotedSurveyIds().includes(surveyId);
   }
 
-  /** Persistently remembers (via localStorage) that this survey has been voted on. */
+  /**
+   * Persistently remembers (via localStorage) that this survey has been voted on.
+   * @param surveyId - id of the survey that was just voted on.
+   */
   private markAsVoted(surveyId: string): void {
     const votedIds = this.readVotedSurveyIds();
     if (votedIds.includes(surveyId)) return;
@@ -142,7 +182,7 @@ export class SurveyDetail {
     );
   }
 
-  /** Reads the list of survey ids this browser has already voted on. */
+  /** @returns the list of survey ids this browser has already voted on. */
   private readVotedSurveyIds(): string[] {
     try {
       const raw = localStorage.getItem(VOTED_SURVEYS_STORAGE_KEY);
