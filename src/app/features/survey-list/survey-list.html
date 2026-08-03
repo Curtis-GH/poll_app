@@ -84,7 +84,7 @@
           [class.survey-sort__trigger--open]="isSortMenuOpen()"
           (click)="toggleSortMenu()"
         >
-          Sort by categories
+          {{ selectedCategory() ? 'Category: ' + selectedCategory() : 'Sort by categories' }}
           <span class="survey-sort__chevron"></span>
         </button>
 

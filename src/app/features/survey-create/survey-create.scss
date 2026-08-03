@@ -193,6 +193,7 @@
   grid-area: category;
   position: relative;
   width: fit-content;
+  isolation: isolate;
 
   &__trigger {
     display: inline-flex;

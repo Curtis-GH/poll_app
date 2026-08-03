@@ -4,7 +4,7 @@ import { SurveyService } from '../../core/services/survey';
 import { SURVEY_CATEGORIES, Survey, SurveyStatus } from '../../models/survey.model';
 import { SurveyCard } from '../../shared/components/survey-card/survey-card';
 
-/** Homescreen: ending-soon highlights, a tab-filtered survey list, and category sorting. */
+/** Homescreen: ending-soon highlights, a tab-filtered survey list, and category filtering. */
 @Component({
   selector: 'app-survey-list',
   imports: [RouterLink, SurveyCard],
@@ -29,13 +29,13 @@ export class SurveyList {
       .slice(0, 3),
   );
 
-  /** Surveys filtered by the active tab, optionally sorted by category. */
+  /** Surveys filtered by the active tab and, if set, restricted to the selected category. */
   readonly visibleSurveys = computed(() => {
     const filtered = this.surveys().filter(
       (survey) => survey.status === this.activeTab(),
     );
     const category = this.selectedCategory();
-    return category ? this.sortedByCategory(filtered, category) : filtered;
+    return category ? filtered.filter((survey) => survey.category === category) : filtered;
   });
 
   constructor() {
@@ -61,7 +61,7 @@ export class SurveyList {
   }
 
   /**
-   * Selects a category to sort by; clicking the same category again clears the selection.
+   * Selects a category to filter by; clicking the same category again clears the selection.
    * @param category - the category that was clicked.
    */
   selectCategory(category: string): void {
@@ -76,15 +76,5 @@ export class SurveyList {
     } finally {
       this.isLoading.set(false);
     }
-  }
-
-  /**
-   * Moves matches of the selected category to the front; order is otherwise stable.
-   * @param surveys - the surveys to reorder.
-   * @param category - the category to bring to the front.
-   * @returns a new array with matching surveys first.
-   */
-  private sortedByCategory(surveys: Survey[], category: string): Survey[] {
-    return [...surveys].sort((a) => (a.category === category ? -1 : 1));
   }
 }

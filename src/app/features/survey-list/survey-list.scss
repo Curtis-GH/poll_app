@@ -214,6 +214,7 @@
 
 .survey-sort {
   position: relative;
+  isolation: isolate;
 
   &__trigger {
     display: inline-flex;
