@@ -3,13 +3,6 @@
   max-width: 1100px;
   margin: 0 auto;
   padding: var(--space-md);
-  background: #ffffff;
-  min-height: 100vh;
-
-  @media (min-width: 600px) {
-    background: transparent;
-    min-height: auto;
-  }
 }
 
 .publish-toast {
@@ -54,7 +47,8 @@
     align-items: center;
     row-gap: 0;
     background: var(--color-bg);
-    border-radius: var(--radius-lg) 56px 0 0;
+    color: var(--color-text-on-dark);
+    border-radius: 0 56px 0 0;
     padding: var(--space-md);
   }
 
@@ -82,7 +76,7 @@
   &__panel {
     grid-area: panel;
     background: var(--color-surface);
-    border-radius: var(--radius-lg) 40px var(--radius-lg) var(--radius-lg);
+    border-radius: 0 40px 0 0;
     padding: var(--space-md);
     display: flex;
     flex-direction: column;
@@ -103,7 +97,6 @@
     background: var(--color-bg);
     margin: 0;
     padding: var(--space-md);
-    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   }
 }
 
@@ -391,6 +384,15 @@ textarea {
   }
 }
 
+.publish-check {
+  color: #000000;
+  font-weight: 700;
+
+  @media (min-width: 600px) {
+    display: none;
+  }
+}
+
 .button {
   display: inline-flex;
   align-items: center;
@@ -450,9 +452,6 @@ textarea {
       'draft draft'
       'heading close'
       'panel panel';
-    background: transparent;
-    border-radius: 0;
-    padding: 0;
   }
 
   .create-survey__draft {
@@ -469,9 +468,6 @@ textarea {
 
   .create-survey__panel {
     margin-top: var(--space-md);
-    background: var(--color-surface);
-    border-radius: var(--radius-lg) 56px var(--radius-lg) var(--radius-lg);
-    padding: var(--space-md);
     display: grid;
     grid-template-columns: 1fr 1fr;
     column-gap: var(--space-lg);
@@ -496,6 +492,11 @@ textarea {
     column-gap: var(--space-xs);
     row-gap: var(--space-xs);
     align-items: center;
+  }
+
+  .deadline-input,
+  .deadline-icon {
+    margin-top: -18px;
   }
 
   .field--meta > .field__label {
@@ -565,18 +566,8 @@ textarea {
     }
   }
 
-  .create-survey__error {
-    background: transparent;
-    padding: 0;
-    margin-top: var(--space-sm);
-  }
-
   .create-survey__publish-row {
     justify-content: flex-end;
-    background: transparent;
-    padding: 0;
-    margin-top: var(--space-md);
-    border-radius: 0;
   }
 
   .add-question-slot {

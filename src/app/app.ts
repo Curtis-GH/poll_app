@@ -3,7 +3,7 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { SiteHeader } from './shared/components/site-header/site-header';
 
 /** Routes that use the dark theme (orange logo); all other routes use the light theme. */
-const DARK_ROUTES = ['/', '/surveys/new'];
+const DARK_ROUTES = ['/'];
 
 /** Routes where the site header is hidden on desktop but shown (with the dark logo) on mobile. */
 const HEADER_HIDDEN_ON_DESKTOP_ROUTES = ['/surveys/new'];
