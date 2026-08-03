@@ -5,6 +5,7 @@
 
   &--highlight {
     background: var(--color-surface-light);
+    border-radius: 0 40px 0 0;
   }
 
   &__link {
@@ -20,7 +21,7 @@
   }
 
   &__category {
-    font-size: 0.75rem;
+    font-size: 16px;
     color: var(--color-accent);
   }
 
@@ -29,7 +30,7 @@
   }
 
   &__title {
-    font-size: 1.1rem;
+    font-size: 24px;
     font-weight: 700;
     color: var(--color-text-on-dark);
     font-family: var(--font-body);
@@ -39,20 +40,24 @@
     color: var(--color-text-on-light);
   }
 
+  &--highlight &__deadline {
+    border-radius: 0 16px 0 0;
+  }
+
   &__deadline {
-    align-self: flex-start;
+    align-self: flex-end;
     background: var(--color-accent-soft);
     color: var(--color-text-on-light);
     font-size: 0.75rem;
     font-weight: 600;
     padding: 4px 12px;
-    border-radius: var(--radius-pill);
+    border-radius: 0 16px 0 0;
   }
 }
 
 @media (min-width: 600px) {
   .survey-card--highlight {
-    border-radius: var(--radius-md) 64px var(--radius-md) var(--radius-md);
+    border-radius: 0 64px 0 0;
 
     .survey-card__link {
       min-height: 340px;
@@ -60,11 +65,11 @@
     }
 
     .survey-card__category {
-      font-size: 0.95rem;
+      font-size: 16px;
     }
 
     .survey-card__title {
-      font-size: 1.6rem;
+      font-size: 24px;
     }
   }
 }

@@ -29,11 +29,11 @@
   &__panel {
     background: var(--color-surface-light);
     color: var(--color-text-on-light);
-    border-radius: var(--radius-lg) 72px var(--radius-lg) var(--radius-lg);
+    border-radius: 0 72px 0 0;
     padding: var(--space-md);
 
     @media (min-width: 600px) {
-      border-radius: var(--radius-lg) 140px var(--radius-lg) var(--radius-lg);
+      border-radius: 0 140px 0 0;
     }
   }
 
@@ -55,7 +55,7 @@
 
   &__ends,
   &__category {
-    font-size: 0.85rem;
+    font-size: 15px;
     color: #6c5690;
   }
 
@@ -74,7 +74,10 @@
     margin-bottom: var(--space-md);
   }
 
-  &__submit {
+  &__submit.button {
+    display: flex;
+    width: fit-content;
+    margin-left: auto;
     margin-top: var(--space-md);
   }
 
@@ -107,9 +110,9 @@
   background: var(--color-accent-soft);
   color: var(--color-text-on-light);
   font-weight: 700;
-  font-size: 0.8rem;
+  font-size: 16px;
   padding: 4px 14px;
-  border-radius: var(--radius-pill);
+  border-radius: 0 16px 0 0;
 }
 
 .close-button {
@@ -124,13 +127,17 @@
   text-decoration: none;
   font-size: 1rem;
   flex-shrink: 0;
+
+  @media (min-width: 600px) {
+    display: none;
+  }
 }
 
 .button {
   display: inline-flex;
   align-items: center;
   border: none;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-lg);
   padding: 10px 20px;
   font-weight: 700;
   text-decoration: none;
