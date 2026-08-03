@@ -16,4 +16,6 @@ export class SiteHeader {
   readonly variant = input<SiteHeaderVariant>('dark');
   /** Shows a "Create survey" button next to the logo (desktop only). */
   readonly showCreateButton = input<boolean>(false);
+  /** Hides the whole header on desktop while keeping it visible on mobile. */
+  readonly hideOnDesktop = input<boolean>(false);
 }

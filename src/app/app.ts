@@ -5,8 +5,8 @@ import { SiteHeader } from './shared/components/site-header/site-header';
 /** Routes that use the dark theme (orange logo); all other routes use the light theme. */
 const DARK_ROUTES = ['/', '/surveys/new'];
 
-/** Routes that hide the site header entirely, per the Create Survey Figma frame. */
-const HEADER_HIDDEN_ROUTES = ['/surveys/new'];
+/** Routes where the site header is hidden on desktop but shown (with the dark logo) on mobile. */
+const HEADER_HIDDEN_ON_DESKTOP_ROUTES = ['/surveys/new'];
 
 /** Matches a survey detail route (`/surveys/:id`), excluding the create-survey route itself. */
 const SURVEY_DETAIL_ROUTE = /^\/surveys\/(?!new$)[^/]+$/;
@@ -24,8 +24,10 @@ export class App {
   /** True on Home and Create Survey (dark theme); false on all other pages. */
   readonly isDarkTheme = signal(DARK_ROUTES.includes(this.router.url));
 
-  /** True on routes where the site header/logo should not be shown. */
-  readonly isHeaderHidden = signal(HEADER_HIDDEN_ROUTES.includes(this.router.url));
+  /** True on routes where the site header is desktop-only-hidden (still shown on mobile). */
+  readonly isHeaderHiddenOnDesktop = signal(
+    HEADER_HIDDEN_ON_DESKTOP_ROUTES.includes(this.router.url),
+  );
 
   /** True on a survey detail page, where the header shows a "Create survey" button (desktop only). */
   readonly showHeaderCreateButton = signal(SURVEY_DETAIL_ROUTE.test(this.router.url));
@@ -35,7 +37,9 @@ export class App {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.isDarkTheme.set(DARK_ROUTES.includes(event.urlAfterRedirects));
-        this.isHeaderHidden.set(HEADER_HIDDEN_ROUTES.includes(event.urlAfterRedirects));
+        this.isHeaderHiddenOnDesktop.set(
+          HEADER_HIDDEN_ON_DESKTOP_ROUTES.includes(event.urlAfterRedirects),
+        );
         this.showHeaderCreateButton.set(SURVEY_DETAIL_ROUTE.test(event.urlAfterRedirects));
       }
     });

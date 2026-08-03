@@ -3,6 +3,13 @@
   max-width: 1100px;
   margin: 0 auto;
   padding: var(--space-md);
+  background: #ffffff;
+  min-height: 100vh;
+
+  @media (min-width: 600px) {
+    background: transparent;
+    min-height: auto;
+  }
 }
 
 .publish-toast {
@@ -37,32 +44,45 @@
 }
 
 .create-survey {
-  &__header {
-    display: flex;
-    justify-content: space-between;
+  &__card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      'draft close'
+      'heading heading'
+      'panel panel';
     align-items: center;
+    row-gap: 0;
+    background: var(--color-bg);
+    border-radius: var(--radius-lg) 56px 0 0;
+    padding: var(--space-md);
+  }
+
+  &__draft {
+    grid-area: draft;
+    justify-self: start;
     margin-bottom: var(--space-sm);
   }
 
-  &__heading-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: var(--space-md);
-    margin-bottom: var(--space-md);
+  &__close {
+    grid-area: close;
+    justify-self: end;
+    margin-bottom: var(--space-sm);
   }
 
   &__heading {
+    grid-area: heading;
     color: var(--color-accent);
     font-family: 'Nerko One', cursive;
     font-weight: 400;
     font-size: 56px;
-    margin-bottom: 0;
+    margin: 0 0 var(--space-md);
   }
 
   &__panel {
+    grid-area: panel;
     background: var(--color-surface);
-    border-radius: var(--radius-lg) 56px var(--radius-lg) var(--radius-lg);
+    border-radius: var(--radius-lg) 40px var(--radius-lg) var(--radius-lg);
     padding: var(--space-md);
     display: flex;
     flex-direction: column;
@@ -72,13 +92,18 @@
   &__error {
     color: var(--color-accent);
     text-align: center;
-    margin-top: var(--space-sm);
+    background: var(--color-bg);
+    margin: 0;
+    padding: var(--space-sm) var(--space-md) 0;
   }
 
   &__publish-row {
     display: flex;
     justify-content: center;
-    margin-top: var(--space-md);
+    background: var(--color-bg);
+    margin: 0;
+    padding: var(--space-md);
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   }
 }
 
@@ -108,8 +133,14 @@
   }
 
   &--meta {
-    flex-direction: column;
-    gap: var(--space-xs);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      'category category'
+      'label icon'
+      'input input';
+    row-gap: var(--space-xs);
+    column-gap: var(--space-xs);
   }
 
   &--description {
@@ -117,10 +148,16 @@
   }
 }
 
-.deadline-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
+.field--meta > .field__label {
+  grid-area: label;
+}
+
+.deadline-icon {
+  grid-area: icon;
+}
+
+.deadline-input {
+  grid-area: input;
 }
 
 .field--name,
@@ -153,6 +190,7 @@
 }
 
 .category-select {
+  grid-area: category;
   position: relative;
   width: fit-content;
 
@@ -394,7 +432,34 @@ textarea {
 }
 
 @media (min-width: 600px) {
+  .create-survey__card {
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      'draft draft'
+      'heading close'
+      'panel panel';
+    background: transparent;
+    border-radius: 0;
+    padding: 0;
+  }
+
+  .create-survey__draft {
+    margin-bottom: var(--space-sm);
+  }
+
+  .create-survey__heading {
+    margin-bottom: 0;
+  }
+
+  .create-survey__close {
+    margin-bottom: 0;
+  }
+
   .create-survey__panel {
+    margin-top: var(--space-md);
+    background: var(--color-surface);
+    border-radius: var(--radius-lg) 56px var(--radius-lg) var(--radius-lg);
+    padding: var(--space-md);
     display: grid;
     grid-template-columns: 1fr 1fr;
     column-gap: var(--space-lg);
@@ -412,11 +477,11 @@ textarea {
   .field--meta {
     grid-area: meta;
     display: grid;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: auto auto 1fr;
     grid-template-areas:
-      'deadline-label category'
-      'deadline-input .';
-    column-gap: var(--space-md);
+      'deadline-label deadline-label category'
+      'deadline-input deadline-icon .';
+    column-gap: var(--space-xs);
     row-gap: var(--space-xs);
     align-items: center;
   }
@@ -425,12 +490,17 @@ textarea {
     grid-area: deadline-label;
   }
 
-  .deadline-row {
+  .deadline-input {
     grid-area: deadline-input;
+  }
+
+  .deadline-icon {
+    grid-area: deadline-icon;
   }
 
   .category-select {
     grid-area: category;
+    margin-left: calc(var(--space-md) - var(--space-xs));
   }
 
   .field--description {
@@ -483,8 +553,18 @@ textarea {
     }
   }
 
+  .create-survey__error {
+    background: transparent;
+    padding: 0;
+    margin-top: var(--space-sm);
+  }
+
   .create-survey__publish-row {
     justify-content: flex-end;
+    background: transparent;
+    padding: 0;
+    margin-top: var(--space-md);
+    border-radius: 0;
   }
 
   .add-question-slot {

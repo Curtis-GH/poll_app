@@ -81,4 +81,12 @@
     margin-left: var(--space-xs);
     opacity: 1;
   }
+
+  &--hide-desktop {
+    background: #ffffff;
+
+    @media (min-width: 600px) {
+      display: none;
+    }
+  }
 }
