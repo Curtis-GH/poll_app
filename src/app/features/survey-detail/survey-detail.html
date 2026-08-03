@@ -5,6 +5,7 @@
     <div class="survey-detail__panel">
       <div class="survey-detail__panel-header">
         <span class="badge">{{ survey.status === 'closed' ? 'Closed' : 'Published' }}</span>
+        <a class="close-button" routerLink="/" aria-label="Close">✕</a>
       </div>
 
       <div class="survey-detail__meta">
